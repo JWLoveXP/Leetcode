@@ -1,0 +1,17 @@
+/*
+二叉树的中序遍历，输出顺序为左，根，右，递归访问。
+*/
+
+void findInorder(vector<int>& res, TreeNode* root)
+{
+	if (!root)
+		return;
+	findInorder(res, root->left);
+	res.push_back(root->val); 
+	findInorder(res, root->right);
+}
+vector<int> inorderTraversal(TreeNode* root) {
+	vector<int> res;
+	findInorder(res, root);
+	return res;
+}
