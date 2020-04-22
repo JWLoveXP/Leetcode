@@ -1,0 +1,40 @@
+/*
+95.不同的二叉搜索树
+递归解法
+*/
+vector<TreeNode*> findTree(int start, int end)
+{
+	vector<TreeNode*>res;
+	if (start > end)
+	{
+		res.push_back(NULL);
+		return res;
+	}
+		
+	for (int i = start; i <= end; i++)
+	{
+		vector<TreeNode*>lefts = findTree(start, i - 1);
+		vector<TreeNode*>rights = findTree(i + 1, end);
+		for (auto left : lefts)
+		{
+			for (auto right : rights)
+			{
+				TreeNode* root = new TreeNode(i); 
+				root->left = left;
+				root->right = right;
+				res.push_back(root);
+			}
+		}
+	}
+	return res;
+
+}
+vector<TreeNode*> generateTrees(int n) {
+	if (n == 0)
+	{
+		vector<TreeNode*>res;
+		res.push_back(0);
+		return res;
+	}
+	return  findTree(1, n);
+}
