@@ -2,6 +2,7 @@
 二叉树的中序遍历，输出顺序为左，根，右，递归访问。
 */
 
+//递归解法
 void findInorder(vector<int>& res, TreeNode* root)
 {
 	if (!root)
@@ -13,5 +14,25 @@ void findInorder(vector<int>& res, TreeNode* root)
 vector<int> inorderTraversal(TreeNode* root) {
 	vector<int> res;
 	findInorder(res, root);
+	return res;
+}
+
+//迭代解法：维护一个栈
+vector<int> inorderTraversal(TreeNode* root) {
+	stack<TreeNode*>st;
+	vector<int>res;
+	TreeNode* cur = root;
+	while (cur != NULL || !st.empty())
+	{
+		while (cur != NULL)
+		{
+			st.push(cur);
+			cur = cur->left;
+		}
+		cur = st.top();
+		st.pop();
+		res.push_back(cur->val);
+		cur = cur->right;
+	}
 	return res;
 }
