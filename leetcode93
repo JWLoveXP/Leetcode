@@ -1,0 +1,50 @@
+/*
+给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式。
+IP格式一共四位，每位0~255
+回溯+剪枝
+*/
+
+bool judge(string& r, string& s)
+{
+//判断两个字符串的大小，短的小于长的，长度一样就比大小
+	if (r.size() < s.size())
+		return true;
+	else if (r <= s)
+		return true;
+	else
+		return false;
+}
+void findIp(vector<string>& res, string& s, string r, int pos, int count)
+{
+//递归函数
+	if ((s.size() - pos) > 3 * (4 - count)) //剪枝操作
+		return;
+	if (count == 4 && pos == s.size()) //保留操作
+	{
+		r.pop_back();
+		res.push_back(r);
+		return;
+	}
+	string temp = "";
+	string maxval = "255";
+	if (s[pos] == '0') //如果首位为0，那么该位只能取0，直接递归
+	{
+		findIp(res, s, r  + "0.", pos + 1, count + 1);
+		return;
+	}
+	for (int i = pos; i < (3 + pos); i++) //数字最高3位
+	{
+		if (i < s.size())
+		{
+			temp += s[i];
+
+			if (judge(temp, maxval))
+				findIp(res, s, r + temp + ".", i + 1, count + 1);
+		}
+	}
+}
+vector<string> restoreIpAddresses(string s) {
+	vector<string> res;
+	findIp(res, s, "", 0, 0);
+	return res;
+}
