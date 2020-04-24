@@ -1,0 +1,81 @@
+二叉搜索树中的两个节点被错误地交换，请在不改变其结构的情况下，恢复这棵树。
+
+方法1：先中序遍历二叉搜索树，保存成数组，排序后在在原来的数组中进行恢复
+时间复杂度 O(n)，空间复杂度 O(n)
+void recoverTree(TreeNode* root) {
+	stack<TreeNode*>st;
+	TreeNode* temp = root;
+	vector<int>v;
+	TreeNode* p;
+	while (!st.empty() || temp)
+	{
+		while (temp)
+		{
+			st.push(temp);
+			temp = temp->left;
+		}
+		p = st.top();
+		st.pop();
+		v.push_back(p->val);
+		temp = p->right;
+	}
+	//有序数组找出交换的值
+	int x = -1;
+	int y = -1;
+	for (int i = 1; i < v.size(); i++)
+	{
+		if (v[i] < v[i - 1])
+		{
+			y = v[i];
+			if (x == -1)
+				x = v[i - 1];
+			else
+				break;
+		}
+	}
+
+	temp = root;
+	vector<int>v;
+	int index = 0;
+	while (!st.empty() || temp)
+	{
+		while (temp)
+		{
+			st.push(temp);
+			temp = temp->left;
+		}
+		p = st.top();
+		st.pop();
+		if (p->val == x)
+			p->val = y;
+		else if (p->val == y)
+			p->val = x;
+		temp = p->right;
+	}
+}
+
+方法二：一次中序遍历二叉搜索树
+时间复杂度 O(n)，空间复杂度 O(n)
+bool isValidBST(TreeNode* root) {
+	if (!root || (!root->left && !root->right))
+		return true;
+	stack<TreeNode*>st;
+	long maxval = LONG_MIN;
+	TreeNode* temp = root;
+	TreeNode* p;
+	while (!st.empty() || temp)
+	{
+		while (temp)
+		{
+			st.push(temp);
+			temp = temp->left;
+		}
+		p = st.top();
+		st.pop(); 
+		if (p->val <= maxval)
+			return false;
+		maxval = p->val;
+		temp = p->right;
+	}
+	return true;
+}
