@@ -1,0 +1,46 @@
+假设一个二叉搜索树具有如下特征：
+    节点的左子树只包含小于当前节点的数。
+    节点的右子树只包含大于当前节点的数。
+    所有左子树和右子树自身必须也是二叉搜索树
+    
+算法思路1：利用中序遍历，左->根->右，根据二叉搜索树的特征可知，中序遍历应该是递增的关系
+时间复杂度 O(n), 空间复杂度 O(n)
+bool isValidBST(TreeNode* root) {
+  if (!root || (!root->left && !root->right))
+		return true;
+	stack<TreeNode*>st;
+	long maxval = LONG_MIN;
+	TreeNode* temp = root;
+	TreeNode* p;
+	while (!st.empty() || temp)
+	{
+		while (temp)
+		{
+			st.push(temp);
+			temp = temp->left;
+		}
+		p = st.top();
+		st.pop(); 
+		if (p->val <= maxval)
+			return false;
+		maxval = p->val;
+		temp = p->right;
+	}
+	return true;
+}
+
+思路2：迭代方法，对于节点root，其有右子树带来的上界，和左子树带来的下界，那么比较边界，并在左右子树中递归
+bool helper(TreeNode*root, TreeNode* lower, TreeNode* upper)
+{
+	if (!root) return true;
+	if (!lower && root->val <= lower->val) return false;
+	if (!upper && root->val >= upper->val) return false;
+
+	if (!helper(root->left, lower, root)) return false;
+	if (!helper(root->right, root, upper)) return false;
+	return true;
+}
+bool isValidBST(TreeNode* root)
+{
+	return helper(root, NULL, NULL);
+}
