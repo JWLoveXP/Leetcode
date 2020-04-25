@@ -1,0 +1,50 @@
+给定一个二叉树，检查它是否是镜像对称的
+思路1：递归法。
+判断左节点和右节点是否值相等，然后递归判断左节点的右孩子和右节点的左孩子是否相等以及左节点的左孩子和右节点的右孩子是否相等
+bool judgeSymmetric(TreeNode* left, TreeNode* right)
+{
+	if (!left && !right)
+		return true;
+	if (!left || !right)
+		return false;
+	if (left->val != right->val)
+		return false;
+	return judgeSymmetric(left->right, right->left) && judgeSymmetric(left->left, right->right);
+}
+bool isSymmetric(TreeNode* root) {
+	if (!root)
+		return true;
+	return judgeSymmetric(root->left, root->right);
+}
+
+思路2：迭代法，比递归法速度更快
+bool isSymmetric(TreeNode* root) {
+	if (!root)
+		return true;
+	stack<TreeNode*>st;
+	st.push(root->left);
+	st.push(root->right);
+	int i;
+	TreeNode* left, *right;
+	while (!st.empty())
+	{
+		for (i = 0; i < st.size(); i++)
+		{
+			left = st.top();
+			st.pop();
+			right = st.top();
+			st.pop();
+			if (!left && !right)
+				continue;
+			if (!left || !right)
+				return false;
+			if (left->val != right->val)
+				return false;
+			st.push(left->right);
+			st.push(right->left);
+			st.push(left->left);
+			st.push(right->right);
+		}
+	}
+	return true;
+}
