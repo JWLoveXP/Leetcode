@@ -21,7 +21,7 @@ bool isSymmetric(TreeNode* root) {
 bool isSymmetric(TreeNode* root) {
 	if (!root)
 		return true;
-	stack<TreeNode*>st;
+	queue<TreeNode*>st;
 	st.push(root->left);
 	st.push(root->right);
 	int i;
@@ -30,9 +30,9 @@ bool isSymmetric(TreeNode* root) {
 	{
 		for (i = 0; i < st.size(); i++)
 		{
-			left = st.top();
+			left = st.front();
 			st.pop();
-			right = st.top();
+			right = st.front();
 			st.pop();
 			if (!left && !right)
 				continue;
