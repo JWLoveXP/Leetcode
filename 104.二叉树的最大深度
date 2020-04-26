@@ -1,0 +1,36 @@
+/*
+104.二叉树的最大深度
+*/
+方法一：递归法，比较左右子树的深度，返回 最大值+1
+int maxDepth(TreeNode* root) {
+	if (!root)
+		return 0;
+	int left = maxDepth(root->left);
+	int right = maxDepth(root->right);
+	return std::max(left, right) + 1;
+}
+方法二：迭代法，使用队列来进行判断，BFS
+int maxDepth(TreeNode* root) {
+	if (!root)
+		return 0;
+	queue<TreeNode*>q;
+	q.push(root);
+	int depth = 0;
+	int i, len;
+	TreeNode* temp;
+	while (!q.empty())
+	{
+		len = q.size();
+		depth++;
+		for (i = 0; i < len; i++)
+		{
+			temp = q.front();
+			q.pop();
+			if (temp->left)
+				q.push(temp->left);
+			if (temp->right)
+				q.push(temp->right);
+		}
+	}
+	return depth;
+}
