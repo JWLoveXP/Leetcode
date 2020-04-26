@@ -1,0 +1,22 @@
+思路：
+前序遍历特点：根->左->右，中序遍历特点：左->根->右，因此从前序遍历找到根节点，然后在中序遍历中将矩阵分成根节点,根节点左边为左子树，右边为右子树，递归调用
+
+TreeNode* build(vector<int>& preorder, int preStart, int preEnd, vector<int>& inorder, int inStart, int inEnd, unordered_map<int, int>&m)
+{
+  //preStart:当前子树左边界，preEnd：当前子树右边界
+	if (preStart > preEnd)
+		return NULL;
+	TreeNode* p = new TreeNode(preorder[preStart]);
+	int index = m[preorder[preStart]];
+	p->left = build(preorder, preStart + 1, preStart+index-inStart, inorder, inStart, index - 1, m);//preStart+index-inStart：有多少属于左子树
+	p->right = build(preorder, preStart + index - inStart+1, preEnd, inorder, index + 1, inEnd, m);
+	return p;
+}
+TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+	if (preorder.size() == 0)
+		return 0;
+	unordered_map<int, int>m;
+	for (int i = 0; i < inorder.size(); i++)
+		m[inorder[i]] = i;
+	return build(preorder, 0, preorder.size()-1, inorder, 0, inorder.size()-1, m);
+}
