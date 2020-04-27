@@ -1,0 +1,33 @@
+/*
+给定一个二叉树，返回其节点值自底向上的层次遍历（即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+思路：借助数据结构队列，最后对得到的正序数组进行翻转
+*/
+vector<vector<int>> levelOrderBottom(TreeNode* root) {
+	vector<vector<int>>res;
+	if (!root)
+		return res;
+	queue<TreeNode*>q;
+	q.push(root);
+	vector<int>temp;
+	TreeNode* p;
+	int i,len;
+	while (!q.empty())
+	{
+		len = q.size();
+		for (i = 0; i < len; i++)
+		{
+			p = q.front();
+			q.pop();
+			temp.push_back(p->val);
+			if (p->left)
+				q.push(p->left);
+			if (p->right)
+				q.push(p->right);
+		}
+		res.push_back(temp);
+		temp.clear();
+	}
+	std::reverse(res.begin(), res.end());
+	return res;
+
+}
