@@ -1,6 +1,8 @@
-
+思路：
+后序遍历特点：左->右->根，中序遍历特点：左->根->右，因此从后序遍历找到根节点，然后在中序遍历中将矩阵分成根节点,根节点左边为左子树，右边为右子树，递归调用
 TreeNode* buildPost(vector<int>& inorder, int instart, int inend, vector<int>& postorder, int poststart, int postend, unordered_map<int, int>&m)
 {
+//instart-inend：当前子树的范围
 	if (instart>inend)
 		return NULL;
 	TreeNode* p = new TreeNode(postorder[postend]);
