@@ -1,0 +1,51 @@
+/*
+给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+*/
+思路1：有序链表，那么找到链表的中间元素作为根节点，在递归构建左子树和右子树。
+如何找到中间节点:快慢指针，slow指针每次移动一格，fast指针一次移动2两格，那么fast到末尾时，slow在中间，在设置一个指针指向slow的前一格
+时间复杂度O(nlogn),空间复杂度 O(1)
+TreeNode* sortedListToBST(ListNode* head) {
+	if (!head)
+		return NULL;
+	ListNode* pre = NULL;
+	ListNode* slow = head;
+	ListNode* fast = head;
+	while (fast && fast->next)
+	{
+		pre = slow;
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	TreeNode* p = new TreeNode(slow->val);
+	if (pre)
+	{
+		pre->next = NULL;
+		p->left = sortedListToBST(head);
+	}
+	p->right = sortedListToBST(slow->next);
+	return p;
+}
+思路二：将链表转换成数组，在进行递归构建，空间换时间
+时间复杂度O(n),空间复杂度 O(n)
+TreeNode* buildBST(vector<int>& nums, int start, int end)
+{
+	if (start > end)
+		return NULL;
+	int mid = (start + end) / 2;
+	TreeNode* p = new TreeNode(nums[mid]);
+	p->left = buildBST(nums, start, mid - 1);
+	p->right = buildBST(nums, mid+1, end);
+	return p;
+}
+TreeNode* sortedListToBST(ListNode* head) {
+	if (!head)
+		return NULL;
+	vector<int>nums;
+	while (head)
+	{
+		nums.push_back(head->val);
+		head = head->next;
+	}
+	return buildBST(nums, 0, nums.size()-1);
+}
