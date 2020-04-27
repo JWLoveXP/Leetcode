@@ -1,0 +1,23 @@
+/*
+108.将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+*/
+二叉搜索树：中序遍历为升序数组
+思路：始终取中间元素为根节点(当偶数时取左边元素)，对左边子树和右边子树递归调用，取中间元素是平衡要求决定的
+ps：还可以偶数时取右边元素，或者随机取左边或者右边
+TreeNode* buildBST(vector<int>& nums, int start, int end)
+{
+	if (start > end)
+		return NULL;
+	int mid = (start + end) / 2;
+	TreeNode* p = new TreeNode(nums[mid]);
+	p->left = buildBST(nums, start, mid - 1);
+	p->right = buildBST(nums, mid+1, end);
+	return p;
+}
+TreeNode* sortedArrayToBST(vector<int>& nums) {
+	int len = nums.size();
+	if (len == 0)
+		return NULL;
+	return buildBST(nums, 0, len - 1);
+}
