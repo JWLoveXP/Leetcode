@@ -1,0 +1,21 @@
+给定一个二叉树，判断它是否是高度平衡的二叉树。
+本题中，一棵高度平衡二叉树定义为：一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1
+
+思路：自底向上获取子树高度，flag用于判断并用于剪枝，如果左右子树不平衡，则flag置为false。
+int judgeBalanced(TreeNode* root,bool& flag)
+{
+	if (!root)
+		return 0;
+	if (!flag)
+		return 0;
+	int left = judgeBalanced(root->left,flag);
+	int right = judgeBalanced(root->right,flag);
+	if (abs(left - right) > 1)
+		flag = false;
+	return std::max(left, right) + 1;
+}
+bool isBalanced(TreeNode* root) {
+	bool flag = true;
+	judgeBalanced(root,flag);
+	return flag;
+}
