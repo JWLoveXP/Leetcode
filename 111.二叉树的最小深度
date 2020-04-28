@@ -1,0 +1,16 @@
+/*
+给定一个二叉树，找出其最小深度。
+最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+说明: 叶子节点是指没有子节点的节点。
+*/
+int minDepth(TreeNode* root) {
+	if (!root)//空节点返回0
+		return 0;
+	int left = minDepth(root->left); //左子树深度
+	int right = minDepth(root->right);//右节点深度
+	if (left == 0)//如果左子节点为空
+		return right + 1;
+	if (right == 0)//如果右节点为空
+		return left + 1;
+	return std::min(left, right) + 1;//都不为空时
+}
