@@ -1,0 +1,29 @@
+/*
+给定一个二叉树和一个目标和，找到所有从根节点到叶子节点路径总和等于给定目标和的路径。
+说明: 叶子节点是指没有子节点的节点。
+*/
+思路：回溯+递归，深度优先搜索遍历所有可能
+void findPath(vector<vector<int>>& res, vector<int>&r, TreeNode* root, int sum)
+{
+	if (!root)
+		return;
+	r.push_back(root->val);
+	sum -= root->val;
+	if (!root->left && !root->right)
+	{
+		if (sum == 0)
+			res.push_back(r);
+		r.pop_back();//回溯
+		return;
+	}
+	findPath(res, r, root->left, sum);
+	findPath(res, r, root->right, sum);
+	r.pop_back();//回溯
+
+}
+vector<vector<int>> pathSum(TreeNode* root, int sum) {
+	vector<vector<int>>res;
+	vector<int>r;
+	findPath(res, r, root, sum);
+	return res;
+}
