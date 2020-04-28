@@ -2,6 +2,7 @@
 本题中，一棵高度平衡二叉树定义为：一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1
 
 思路：自底向上获取子树高度，flag用于判断并用于剪枝，如果左右子树不平衡，则flag置为false。
+时间复杂度 O(n), 空间复杂度O（n）
 int judgeBalanced(TreeNode* root,bool& flag)
 {
 	if (!root)
