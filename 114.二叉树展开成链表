@@ -1,0 +1,59 @@
+给定一个二叉树，原地将它展开为链表
+
+思路1：递归方法 时间复杂度O(nlogn),空间复杂度O(1)
+void flatten(TreeNode* root) {
+	if (!root)
+		return;
+	flatten(root->left); //将左子树转化成链表
+	flatten(root->right); //将右子树转化成链表
+	TreeNode* p = root->right;//保留有右子树
+	root->right = root->left;//左子树搬到右边
+	root->left = NULL; //记得将左孩子置为NULL
+	TreeNode* q = root;//找到新的尾节点
+	while (q->right)
+		q = q->right;
+	q->right = p;//连接
+}
+思路二：迭代方法，时间复杂度O(nlogn),空间复杂度O(1)，同迭代相比，空间更少，无需进栈
+void flatten(TreeNode* root) {
+	while (root)
+	{
+		if (root->left == NULL)
+			root = root->right; //无左子树
+		else
+		{
+			TreeNode* p = root->right;//保留右子树
+			TreeNode* q = root->left;
+			while (q->right)//找到左子树左右的节点，该节点为最终连接右子树的节点
+				q = q->right;
+			root->right = root->left;//左子树搬到右边
+			root->left = NULL;//注意左子树置为NULL
+			q->right = p;//同右子树相连
+			root = root->right;//判断
+		}
+	}
+}
+思路三：借助一个辅助栈，值得注意按层序遍历的方式进栈，所以是先右孩子进栈，在左孩子进栈，从而形成线序遍历的格式
+void flatten(TreeNode* root) {
+	if (!root)
+		return;
+	stack<TreeNode*>st;
+	st.push(root);
+	TreeNode* dummy = new TreeNode(0);
+	TreeNode* q = dummy;
+	TreeNode* p;
+	while (!st.empty())
+	{
+		p = st.top();
+		st.pop();
+		if (p->right)
+			st.push(p->right);
+		if (p->left)
+			st.push(p->left);
+		q->right = p;
+		q->left = NULL;
+		q = q->right;
+	}
+	delete dummy;
+	
+}
