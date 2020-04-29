@@ -1,0 +1,22 @@
+给定一个非负整数 numRows，生成杨辉三角的前 numRows 行，在杨辉三角中，每个数是它左上方和右上方的数的和
+思路：类似于动态规划的方法，r[j] = pre[j] + pre[j+1]
+ vector<vector<int>> generate(int numRows) {
+    vector<vector<int>>res;
+	if (numRows == 0)
+		return res;
+	res.push_back(vector<int>(1, 1));
+	int i, j;
+	for (i = 2; i <= numRows;i++)
+	{
+		vector<int>r(i,1);
+		if (i == 2)
+			res.push_back(r);
+		else
+		{
+			for (j = 1; j < (i - 1); j++)
+				r[j] = res.back()[j] + res.back()[j - 1];
+			res.push_back(r);
+		}
+	}
+	return res;
+}
