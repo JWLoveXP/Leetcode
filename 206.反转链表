@@ -1,0 +1,35 @@
+思路：头插法，创建一个哨兵节点，时间复杂度 O(n), 空间复杂度O(1)
+迭代：
+ListNode* reverseList(ListNode* head) {
+	ListNode* dummy = new ListNode(0);
+	ListNode* p;
+	while (head)
+	{
+		p = head;
+		head = head->next;
+		p->next = dummy->next;
+		dummy->next = p;
+	}
+	p = dummy->next;
+	delete dummy;
+	return p;
+}
+递归：
+void reverse(ListNode* dummy, ListNode*head)
+{
+	if (!head)
+		return;
+	ListNode*p = head;
+	head = head->next;
+	p->next = dummy->next;
+	dummy->next = p;
+	reverse(dummy, head);
+}
+ListNode* reverseList(ListNode* head) {
+	ListNode* dummy = new ListNode(0);
+	ListNode*p;
+	reverse(dummy, head);
+	p = dummy->next;
+	delete dummy;
+	return p;
+}
