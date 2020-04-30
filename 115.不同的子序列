@@ -1,0 +1,37 @@
+给定一个字符串 S 和一个字符串 T，计算在 S 的子序列中 T 出现的个数。
+一个字符串的一个子序列是指，通过删除一些（也可以不删除）字符且不干扰剩余字符相对位置所组成的新字符串。
+（例如，"ACE" 是 "ABCDE" 的一个子序列，而 "AEC" 不是）
+
+思路：动态规划，dp[i][j]表示 t 中0-i字串在 s 中 0-j 字串中有多少个组合数
+若 s[j] == t[i], dp[i][j]=dp[i-1][j-1] + dp[i][j-1],其中dp[i-1][j-1]表示以第 j 个字符结尾的组合数，dp[i][j-1]表示不是以第 j 个字符结尾的组合
+若 s[j] ！= t[i], dp[i][j]=dp[i][j-1]
+int numDistinct(string s, string t) {
+	if (s.size() == 0 || t.size() == 0)
+		return 0;
+	int s_len = s.size();
+	int t_len = t.size();
+	vector<vector<long long>>dp(t_len, vector<long long>(s_len, 0));
+	int i, j,k;
+	if (s[0] == t[0])
+		dp[0][0] = 1;
+	for (i = 1; i < s_len; i++)
+	{
+		if (s[i] == t[0])
+			dp[0][i] = dp[0][i - 1] + 1;
+		else
+			dp[0][i] = dp[0][i - 1];
+	}
+	for (i = 1; i < t_len; i++)
+	{
+		for (j = i; j < s_len; j++)
+		{
+			if (t[i] == s[j])
+			{
+				dp[i][j] = dp[i][j - 1] + dp[i - 1][j - 1];
+			}
+			else
+				dp[i][j] = dp[i][j - 1];
+		}
+	}
+	return dp[t_len-1][s_len-1];
+}
