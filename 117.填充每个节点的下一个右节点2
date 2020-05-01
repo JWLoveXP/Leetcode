@@ -32,3 +32,60 @@
 	}
 	return root;
     }
+
+思路2：利用next指向像个节点的特性，假如已经找到N层的next指向关系，那么对于N+1层，可以不使用队列而能找到下一个节点
+同116相比，失去了完美二叉树的条件，那么情况会比较复杂，具体见注释
+Node* connect1(Node* root) {
+	
+	if (!root)
+		return root;
+	Node* pre = root; //最左边的父节点
+	Node* head, *temp;
+	while (pre)
+	{
+		head = pre; //当前指向的父节点
+		while (head)
+		{
+			if (head->left) //左孩子存在
+			{
+				temp = head->left; //当前子树同右子树待连接孩子为左孩子
+				if (head->right) //如果右孩子存在
+				{
+					temp = head->right;//当前子树同右子树待连接孩子为右孩子
+					head->left->next = head->right;//左孩子指向右孩子
+				}
+			}
+			else
+				temp = head->right;//左孩子不存在时，当前子树同右子树待连接孩子为右孩子
+			while (head->next)//连接两个子树
+			{
+				if (!head->next->left && !head->next->right)//当前父节点无孩子,跳过
+				{
+					head = head->next;
+					continue;
+				}
+				if (head->next->left)
+					temp->next = head->next->left; //左孩子存在，连接左孩子
+				else
+					temp->next = head->next->right;//左孩子不存在，连接右孩子
+				break;
+			}
+			head = head->next;//指向下一个父节点
+
+		}
+		//进入下一层，找到最左边孩子的父节点
+		if (pre->left)
+			pre = pre->left;
+		else
+			pre = pre->right;
+		while (pre)
+		{
+			if (!pre->left && !pre->right) //无孩子，跳过
+				pre = pre->next;
+			else
+				break;
+		}
+	}
+	return root;
+}
+	
