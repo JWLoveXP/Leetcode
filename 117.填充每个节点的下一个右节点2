@@ -39,7 +39,7 @@ Node* connect1(Node* root) {
 	
 	if (!root)
 		return root;
-	Node* pre = root; //最左边的父节点
+	Node* pre = root; //最左边孩子的父节点
 	Node* head, *temp;
 	while (pre)
 	{
