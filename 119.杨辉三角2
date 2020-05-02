@@ -1,0 +1,23 @@
+给定一个非负索引 k，其中 k ≤ 33，返回杨辉三角的第 k 行
+思路：建立一个包含 k+1 个元素的数组,杨辉三角的公式时res[i][k] = res[i-1][k-1] + res[i-1][k],因为只是求一行，只建立一个一维数组，
+对于第i行res[j] = pre + res[j],pre代表res[i-1][k-1]，因为对于第j-1个已经覆盖了，所有得先记录
+时间复杂度0(k)，空间复杂度O(K^2)
+vector<int> getRow(int rowIndex) {
+	vector<int>res(rowIndex+1);
+	res[0] = 1;
+	if (rowIndex == 0)
+		return res;
+	res[1] = 1;
+	int i, j, pre, temp;
+	for (i = 2; i <= rowIndex; i++)
+	{
+		pre = 1;
+		for (j = 1; j < i; j++)
+		{
+			temp = res[j];
+			res[j] = res[j] + pre;
+			pre = temp;
+		}
+		res[i] = 1;
+	}
+	return res；}
