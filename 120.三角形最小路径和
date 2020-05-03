@@ -1,0 +1,40 @@
+给定一个三角形，找出自顶向下的最小路径和。每一步只能移动到下一行中相邻的结点上。
+例如，给定三角形：
+
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）
+对于经过5这条路径，只要比较其上方这条路径的长度和左前方路径的长度，选择短的那条。
+思路：对路径分析可知，对于元素的下一行相邻节点，是它的正下方元素或者正下方元素右边的元素，设置最后一行大小的数组，
+记录前一行左前方的元素，即可不用申请三角形大小的数组
+时间复杂度 O(N^2)，空间复杂度 O(k)，k为最后一行长度
+int minimumTotal(vector<vector<int>>& triangle) {
+	int row = triangle.size()-1;
+	vector<int>res(triangle[row].size(), 0);
+	res[0] = triangle[0][0];
+	int i, j, pre, temp;
+	for (i = 1; i <= row; i++)
+	{
+		pre = res[0];
+		res[0] += triangle[i][0];
+		for (j = 1; j < triangle[i].size()-1; j++)
+		{
+			temp = res[j];
+			res[j] = pre < res[j] ? pre : res[j];
+			res[j] += triangle[i][j];
+			pre = temp;
+		}
+		res[triangle[i].size() - 1] = pre + triangle[i][triangle[i].size() - 1];
+	}
+	int min = INT_MAX;
+	for (i = 0; i < res.size(); i++)
+	{
+		if (res[i] < min)
+			min = res[i];
+	}
+	return min;
+}
