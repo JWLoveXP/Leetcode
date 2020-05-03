@@ -1,0 +1,40 @@
+给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。
+注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+输入: [7,1,5,3,6,4]
+输出: 7
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+如果我们分析图表，那么我们的兴趣点是连续的峰和谷
+关键是我们需要考虑到紧跟谷的每一个峰值以最大化利润。如果我们试图跳过其中一个峰值来获取更多利润，
+那么我们最终将失去其中一笔交易中获得的利润，从而导致总利润的降低，画图后易得
+
+思路，找到每个峰谷和封顶，求差值
+时间复杂度 O(N), 空间复杂度 O(1)
+  int maxProfit(vector<int>& prices) {
+	int len = prices.size();
+	int valley = prices[0];
+	int peak = prices[0];
+	int maxProfile = 0;
+	int i = 1;
+	while (i < len)
+	{
+		while (i < len && prices[i] <= prices[i - 1])
+			i++;
+		valley = prices[i - 1];
+		while (i < len&&prices[i] >= prices[i - 1])
+			i++;
+		peak = prices[i - 1];
+		maxProfile += (peak - valley);
+	}
+	return maxProfile;
+    }
+    
+    
+思路2：贪心算法，遍历整个股票交易日价格列表 price，策略是所有上涨交易日都买卖（赚到所有利润），所有下降交易日都不买卖（永不亏钱）。
+    def maxProfit(self, prices
+        profit = 0
+        for i in range(1, len(prices)):
+            tmp = prices[i] - prices[i - 1]
+            if tmp > 0: profit += tmp
+        return profit
