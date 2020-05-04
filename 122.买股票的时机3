@@ -1,0 +1,39 @@
+给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。
+设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。
+注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+该思路对于股票问题可通用，对于不同的情况可以化简。
+动态规划：dp[i][k][r],i代表第i天，k代表已交易的天数，r代表当天是否持有股票
+若未持有，dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + price[i])
+dp[i-1][k][0]代表前一天未持有，今天未操作
+dp[i-1][k][1] + price[i]代表前一天持有，今天卖出，卖出则加入
+若持有，dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - price[i])
+dp[i-1][k][1]代表前一天持有，今天未操作
+dp[i-1][k-1][0] - price[i]代表前一天未持有，今天买入，买入k加一，同时付钱
+
+初始条件
+dp[0][k][0]=0 第0天，未持有时利润为0
+dp[0][k][1]=INT_MIN 第0天，不可能持有，用INT_MIN表示
+dp[i][0][0] = 0 未买入且未持有，利润为0
+dp[i][0][1] = INT_MIN 未买入但持有持有，不可能，用INT_MIN表示
+代码：
+int maxProfit(vector<int>& prices) {
+	int len = prices.size();
+	int maxk = 2;
+	vector<vector<vector<int>>>dp(len + 1, vector<vector<int>>(maxk+1, vector<int>(2, INT_MIN)));
+	int i, k;
+	//初始化
+	for (k = 0; k <= maxk; k++)
+		dp[0][k][0] = 0;//第0天未持有时利润为0
+	for (i = 1; i <= len; i++)
+		dp[i][0][0] = 0;//若一直未操作则未0
+	for (i = 1; i <= len; i++)
+	{
+		for (k = 1; k <= maxk; k++)
+		{
+			dp[i][k][0] = std::max(dp[i - 1][k][0], dp[i - 1][k][1] + prices[i-1]); 
+			dp[i][k][1] = std::max(dp[i - 1][k][1], dp[i - 1][k - 1][0] - prices[i-1]);
+
+		}
+	}
+	return dp[len][maxk][0];
+}
