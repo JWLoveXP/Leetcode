@@ -1,0 +1,49 @@
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+说明：本题中，我们将空字符串定义为有效的回文串。
+
+思路，双指针，一个指针指向头部，一个指向尾部，当遇到非字母和数字字符时跳过
+时间复杂度O(N)，空间复杂度O（1）
+bool judeg(char c)//判断是否时字母或者数字字符
+{
+	if (c >= '0' && c <= '9')
+		return true;
+	else if (c >= 'a' && c <= 'z')
+		return true;
+	else if (c >= 'A' && c <= 'Z')
+		return true;
+	else
+		return false;
+}
+char toSmall(char c)//将大写字母转换成小写字母
+{
+	if (c >= 'A' && c <= 'Z')
+		c = c - 'A' + 'a';
+	return c;
+}
+bool isPalindrome(string s) {
+	int len = s.size();
+	if (len <= 1)
+		return true;
+	int left = 0;
+	int right = len - 1;
+	while (left < len && !judeg(s[left]))
+		left++;
+	while (right >= 0 && !judeg(s[right]))
+		right--;
+	while (left <= right)
+	{
+		if (toSmall(s[left]) == toSmall(s[right]))
+		{
+			left++;
+			while (left < len && !judeg(s[left]))
+				left++;
+			right--;
+			while (right >= 0 && !judeg(s[right]))
+				right--;
+		}
+		else
+			return false;
+	}
+	return true;
+}
