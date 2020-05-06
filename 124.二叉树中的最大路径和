@@ -1,0 +1,31 @@
+给定一个非空二叉树，返回其最大路径和。
+本题中，路径被定义为一条从树中任意节点出发，达到任意节点的序列。该路径至少包含一个节点，且不一定经过根节点
+思路：自底向上变量，讨论经过每个结点的情况。对于每个结点，计算左支路的最大值，如果小于0，则置为0，即不经过左支路，
+计算右支路的最大值，如果小于0，则置为0，即不经过右支路。判断经过该结点的路径的最大值是否大于目前最大值。然后返回某条支路的最大值。
+时间复杂度O(N),空间复杂度O（logN）
+int findPath(TreeNode* root, int& maxVal)
+{
+	if (!root)
+		return 0;
+	if (!root->left && !root->right)
+	{
+		if (maxVal < root->val)
+			maxVal = root->val;
+		return root->val;
+
+	}
+	int left = findPath(root->left, maxVal);
+	int right = findPath(root->right, maxVal);
+	left = left>0 ? left : 0;
+	right = right > 0 ? right : 0;
+	int val = left + right + root->val;
+	if (val > maxVal)
+		maxVal = val;
+	return left > right ? left + root->val : right + root->val;
+
+}
+int maxPathSum(TreeNode* root) {
+	int maxVal = INT_MIN;
+	findPath(root, maxVal);
+	return maxVal;
+}
