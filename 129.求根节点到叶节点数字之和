@@ -1,0 +1,24 @@
+给定一个二叉树，它的每个结点都存放一个 0-9 的数字，每条从根到叶子节点的路径都代表一个数字。
+例如，从根到叶子节点路径 1->2->3 代表数字 123。
+计算从根到叶子节点生成的所有数字之和。
+说明: 叶子节点是指没有子节点的节点
+思路：前序遍历即可，递归方法
+void number(TreeNode* root, int val, int& res)
+{
+	if (!root)
+		return;
+	val = val * 10 + root->val;
+	if (!root->left && !root->right)
+	{
+		res += val;
+		return;
+	}
+	number(root->left, val, res);
+	number(root->right, val, res);
+}
+int sumNumbers(TreeNode* root) {
+	int res = 0;
+	int val = 0;
+	number(root, val, res);
+	return res;
+}
