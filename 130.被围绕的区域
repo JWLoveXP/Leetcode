@@ -1,0 +1,82 @@
+给定一个二维的矩阵，包含 'X' 和 'O'（字母 O）。
+找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充
+
+思路：利用flag数组来进行标记，也可以原地标记，如用'#'来进行标记。判断'O'开始的区域，如果区域的有在边界的点，就不合并，否则不合并
+
+优化：只要找到从边界'O'开始的区域，也就是说只找边界的地方的'O',标记为#，在对数组进行遍历，标记为'#'的换为'O',而为'O'换为'X'
+struct point
+{
+	int row;
+	int col;
+	point(int x=0, int y=0) :row(x), col(y){}
+};
+void findSolve(vector<vector<char>>& board, vector<vector<int>>& flag, int row, int col)
+{
+	queue<point>q;
+	point temp(row, col);
+	q.push(temp);
+	flag[row][col] = 1;
+	vector<point>res;
+	res.push_back(temp);
+	bool judge = true;
+	int x, y;
+	while (!q.empty())
+	{
+		temp = q.front();
+		q.pop();
+		x = temp.row;
+		y = temp.col;
+		if (x == 0 || y == 0 || x == board.size() - 1 || y == board[0].size() - 1)
+			judge = false;
+		if (x > 0 && board[x - 1][y] == 'O' && flag[x - 1][y] == 0)//上
+		{
+			flag[x - 1][y] = 1;
+			q.push(point(x - 1, y));
+			res.push_back(point(x - 1, y));
+		}
+		if (x <  board.size() - 1 && board[x + 1][y] == 'O' && flag[x + 1][y] == 0)//下
+		{
+			flag[x + 1][y] = 1;
+			q.push(point(x + 1, y));
+			res.push_back(point(x + 1, y));
+		}
+		if (y > 0 && board[x][y - 1] == 'O' && flag[x][y - 1] == 0)
+		{
+			flag[x][y - 1] = 1;
+			q.push(point(x, y - 1));
+			res.push_back(point(x, y - 1));
+		}
+		if (y < board[0].size()-1 && board[x][y+1] == 'O' && flag[x][y+1] == 0)
+		{
+			flag[x][y+1] = 1;
+			q.push(point(x, y + 1));
+			res.push_back(point(x, y + 1));
+		}
+	}
+	if (judge)
+	{
+		for (int i = 0; i < res.size(); i++)
+		{
+			temp = res[i];
+			board[temp.row][temp.col] = 'X'; 
+		}
+	}
+
+}
+void solve(vector<vector<char>>& board) {
+	int row = board.size();
+	if (row == 0)
+		return;
+	int col = board[0].size();
+	if (col == 0)
+		return;
+	vector<vector<int>> flag(row, vector<int>(col, 0));
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			if (board[i][j] == 'O' && flag[i][j] == 0)
+				findSolve(board, flag, i, j);
+		}
+	}
+}
