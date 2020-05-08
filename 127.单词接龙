@@ -1,0 +1,103 @@
+给定两个单词（beginWord 和 endWord）和一个字典，找到从 beginWord 到 endWord 的最短转换序列的长度。转换需遵循如下规则：
+    每次转换只能改变一个字母。
+    转换过程中的中间单词必须是字典中的单词。
+说明:
+    如果不存在这样的转换序列，返回 0。
+    所有单词具有相同的长度。
+    所有单词只由小写字母组成。
+    字典中不存在重复的单词。
+    你可以假设 beginWord 和 endWord 是非空的，且二者不相同。
+    
+思路：广度优先遍历，将题目转化成树结构，遍历一层，如果有 endword， 则返回深度。借助队列实现，同时设置一个访问数组来避免环
+注意：最初我通过遍历所有字符对比的方式会超时，因为这种方式会和字符数量以及长度有关，通过字符替换的方式+set表，效率更高
+int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+	unordered_set<string> dict(wordList.begin(), wordList.end());
+	unordered_set<string> visited;
+	visited.insert(beginWord);
+
+	queue<string>q;
+	int count = 1;
+	q.push(beginWord);
+	int size, i, j;
+	string temp;
+	while (!q.empty())
+	{
+		count++;
+		size = q.size();
+		for (i = 0; i < size; i++)//层序遍历
+		{
+			temp = q.front();
+			q.pop();
+			for (j = 0; j < temp.size(); j++)//寻找邻接词
+			{
+				string word = temp;
+				for (char c = 'a'; c <= 'z'; c++)
+				{
+					word[j] = c;
+					if (visited.count(word) || !dict.count(word))continue;//已经访问或者未出现则跳过
+					if (word == endWord)
+						return count;
+					visited.insert(word);
+					q.push(word);
+				}
+			}
+		}
+	}
+	return 0;
+}
+优化：双向BFS
+从头开始搜索+从尾部开始搜索，当有一个词在两个访问表中都被访问时，说明交汇了，返回深度
+在这里，对前后两个队列，每次层序遍历数量少的队列，速度会更快（因为到中部的时候，队列的大小会越来越大）
+int ladderLength2(string beginWord, string endWord, vector<string>& wordList) {
+	unordered_set<string> dict(wordList.begin(), wordList.end());
+	if (dict.count(endWord) == 0)
+		return 0;
+	queue<string>q1;
+	q1.push(beginWord);
+	unordered_set<string> visited1;
+	visited1.insert(beginWord);
+
+	queue<string>q2;
+	q2.push(endWord);
+	unordered_set<string> visited2;
+	visited2.insert(endWord);
+	
+	int count = 1;
+	int size, i, j;
+	string temp;
+	while (!q1.empty() && !q2.empty())
+	{
+		if (q1.size() > q2.size())//交换队列，q1始终为小尺寸队列
+		{
+			queue<string>temp = q1;
+			q1 = q2;
+			q2 = temp;
+			unordered_set<string>visited;
+			visited = visited1;
+			visited1 = visited2;
+			visited2 = visited;
+		}
+		count++;
+		size = q1.size();
+		for (i = 0; i < size; i++)
+		{
+			temp = q1.front();
+			q1.pop();
+			for (j = 0; j < temp.size(); j++)
+			{
+				string word = temp;
+				for (char c = 'a'; c <= 'z'; c++)
+				{
+					word[j] = c;
+					if (visited1.count(word) || !dict.count(word))continue;
+					if (visited2.count(word))//表2中也访问了，则说明交汇了，返回
+						return count;
+					visited1.insert(word);
+					q1.push(word);
+				}
+			}
+		}
+
+	}
+	return 0;
+}
