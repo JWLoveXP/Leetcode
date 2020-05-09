@@ -1,0 +1,74 @@
+给定两个单词（beginWord 和 endWord）和一个字典 wordList，找出所有从 beginWord 到 endWord 的最短转换序列。转换需遵循如下规则：
+    每次转换只能改变一个字母。
+    转换过程中的中间单词必须是字典中的单词。
+说明:
+    如果不存在这样的转换序列，返回一个空列表。
+    所有单词具有相同的长度。
+    所有单词只由小写字母组成。
+    字典中不存在重复的单词。
+    你可以假设 beginWord 和 endWord 是非空的，且二者不相
+思路：BFS，注意该题和127题差别，该题需要获取所有的最短路径，所有队列中为路径的数组，如
+第一层 {'ab'}
+第二层 {'ab', 'ac'}
+算法中设置了两个访问数组，一个为总体的访问集合visited，代表当前层访问之前所有的已经访问的元素；另一个为当前层的访问数组visit，代表当前层访问的元素
+vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+	vector<vector<string>>res;
+	unordered_set<string>dict(wordList.begin(), wordList.end());//字典，存放单词
+	unordered_set<string>visited;//访问集合
+
+	if (dict.count(endWord) == 0)
+		return res;
+	queue<vector<string>>q;//队列中是vector数组
+	vector<string>r;
+	vector<string>visit;//存放当前层访问的元素，可能存在上一层元素的下一层元素是相同的元素
+	r.push_back(beginWord);
+	q.push(r);
+	visited.insert(beginWord);
+	int size, i, j;
+	string temp,word;
+	while (!q.empty())
+	{
+		size = q.size();
+		visit.clear();
+		for (i = 0; i < size; ++i)
+		{
+			r = q.front();
+			q.pop();
+			temp = r.back();//取出最后一个元素
+			if (temp == endWord)//当前元素为目标元素
+			{
+				if (res.empty())
+					res.push_back(r);
+				else
+				{
+					if (r.size() < res[0].size())
+					{
+						res.clear();
+						res.push_back(r);
+					}
+					else if (r.size() == res[0].size())
+						res.push_back(r);
+				}
+				continue;
+			}
+			for (j = 0; j < temp.size(); j++)
+			{
+				word = temp;
+				for (char ch = 'a'; ch <= 'z'; ch++)
+				{
+					word[j] = ch;
+					if (!dict.count(word) || visited.count(word))continue;//已经访问了或者不存在，跳过
+					if (word != endWord)//对于最后一个目标元素，不加入访问数组
+						visit.push_back(word);
+					r.push_back(word);
+					q.push(r);
+					r.pop_back();
+				}
+			}
+		}
+		for (i = 0; i < visit.size(); i++)
+			visited.insert(visit[i]);//把这层访问的元素加入访问集合
+	}
+	return res;
+}
+优化：双向BFS,思路同127题，暂时未完成
