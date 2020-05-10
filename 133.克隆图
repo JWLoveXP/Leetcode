@@ -1,0 +1,31 @@
+给你无向 连通 图中一个节点的引用，请你返回该图的 深拷贝（克隆）。
+图中的每个节点都包含它的值 val（int） 和其邻居的列表
+思路采用广度优先遍历，哈希表中存放的是原元素->新元素
+Node* cloneGraph(Node* node) {
+
+	if (!node)
+		return NULL;
+	unordered_map<Node*, Node*>set;
+	queue<Node *>q;
+	Node* head = new Node(node->val);
+	q.push(node);
+	set[node] = head;
+	int len, i;
+
+	Node* temp;
+	while (!q.empty())
+	{
+		temp = q.front();
+		q.pop();
+		for (auto neighbor : temp->neighbors)
+		{
+			if (set.count(neighbor) == 0)
+			{
+				set[neighbor] = new Node(neighbor->val);
+				q.push(neighbor); 
+			}
+			set[temp]->neighbors.push_back(set[neighbor]);
+		}
+	}
+	return head;
+}
