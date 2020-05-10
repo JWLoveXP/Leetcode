@@ -19,7 +19,7 @@ Node* cloneGraph(Node* node) {
 		q.pop();
 		for (auto neighbor : temp->neighbors)
 		{
-			if (set.count(neighbor) == 0)
+			if (set.count(neighbor) == 0)//如果未访问过
 			{
 				set[neighbor] = new Node(neighbor->val);
 				q.push(neighbor); 
