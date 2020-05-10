@@ -1,0 +1,45 @@
+给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。
+返回符合要求的最少分割次数。
+
+思路：动态规划，s[i-1],代表字符串0-i-1需要分割几次，对于0-i字符串，如果为回文串，那么s[i]=0,
+如果不是，遍历j=0-i，若j+1-i为回文串，那么s[i] = min(s[i], s[j]+1)
+按131的动态规划+回溯，会超时
+int minCut(string s)
+{
+	int len = s.size();
+	if (len == 0)
+		return 0;
+	vector<vector<bool>>dp(len, vector<bool>(len, false));
+	int i, j;
+	for (i = 0; i < len; i++)
+		dp[i][i] = true;
+	for (i = 0; i < len - 1; i++)
+	{
+		if (s[i] == s[i + 1])
+			dp[i][i + 1] = true;
+	}
+	for (j = 2; j < len; j++)
+	{
+		for (i = 0; i < len - j; i++)
+		{
+			if (dp[i + 1][i + j - 1] && s[i] == s[i + j])
+				dp[i][i + j] = true;
+		}
+	}
+	//判断分割几次
+	vector<int>res(len,len);
+	for (i = 0; i < len; i++)//第i个字符
+	{
+		if (dp[0][i])
+		{
+			res[i] = 0;
+			break;
+		}
+		for (j = i-1; j >= 0; j--)
+		{
+			if (dp[j + 1][i])
+				res[i] = res[i] < (res[j] + 1) ? res[i] : (res[j] + 1);
+		}
+	}
+	return res[len - 1];
+}
