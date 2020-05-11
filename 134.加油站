@@ -1,0 +1,32 @@
+在一条环路上有 N 个加油站，其中第 i 个加油站有汽油 gas[i] 升
+你有一辆油箱容量无限的的汽车，从第 i 个加油站开往第 i+1 个加油站需要消耗汽油 cost[i] 升。你从其中的一个加油站出发，开始时油箱为空
+如果你可以绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1
+说明:
+
+    如果题目有解，该答案即为唯一答案。
+    输入数组均为非空数组，且长度相同。
+    输入数组中的元素均为非负数。
+思路：使用变量total记录经过N个加油站还剩余多少油，若total<0,那么返回-1。
+使用curr表示到第i+1个加油站还剩余多少油，如果小于0了，说明之前设置的起点到不了该地点，同时中间那些加油站也做不了起点，因为也会curr也会小于0，
+那么curr置为第i+1个到i+2加油站剩余油量，起点置为i+1
+int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+	int total = 0, cur = 0;
+	int len = gas.size();
+	int index = 0, i;
+	i = 0;
+	while (i < len)
+	{
+		total += gas[i] - cost[i];//总油量
+		cur += gas[i] - cost[i];//当前油量
+		if (cur < 0)//当前油量到不了i+1加油站
+		{
+			index = i + 1;//i+1加油站作为起点
+			cur = 0;
+		}
+		i++;
+	}
+	if (total >= 0)
+		return index;
+	else
+		return -1;
+}
