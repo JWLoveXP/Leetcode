@@ -1,0 +1,56 @@
+给定一个未排序的整数数组，找出最长连续序列的长度。
+要求算法的时间复杂度为 O(n)
+输入: [100, 4, 200, 1, 3, 2]
+输出: 4
+解释: 最长连续序列是 [1, 2, 3, 4]。它的长度为 4。
+思路：哈希表，哈希表中存放数组，然后对于其中的每个元素，判断是否有比他小1的元素，如果有，那么该元素不会作为序列起点，
+如果没有，则作为序列起点，判断有多少连续的数字。
+时间复杂度O(N),空间复杂度O（N）
+在代码中for循环里嵌套了while，看上去是O(N^2),但是while中实际上只遍历了N个元素，所有还是O(N)
+int longestConsecutive(vector<int>& nums) {
+	unordered_set<int>num_set;
+	for (auto i : nums)
+		num_set.insert(i);
+	int maxVal = 0;
+	int curr_num, curr_val;
+	for (auto num : num_set)
+	{
+		if (num_set.count(num - 1) == 0)//不存在比它小的下一个元素，那么该元素可以为起点
+		{
+			curr_num = num + 1;//判断连续的下一个元素
+			curr_val = 1;
+			while (num_set.count(curr_num))
+			{
+				curr_val++;
+				curr_num++;
+			}
+			if (curr_val > maxVal)
+				maxVal = curr_val;
+		}
+	}
+	return maxVal;
+    }
+ 思路2：map表，对于每个元素，寻找是否有相邻的元素，如果有更新当前元素所在的序列中的数量，以及边界元素的序列数量。
+ 时间复杂度O(N),空间复杂度O（N），但是系数比方法1大
+ int longestConsecutive(vector<int>& nums) {
+	unordered_map<int, int>mymap;
+	int len = nums.size();
+	int maxVal = 0;
+	for (int i = 0; i < len; ++i)
+	{
+		if (mymap.count(nums[i]) == 1)
+			continue;
+		mymap[nums[i]] = 1;
+		if (mymap.count(nums[i] - 1))
+			mymap[nums[i]] += mymap[nums[i] - 1];
+		if (mymap.count(nums[i] + 1))
+			mymap[nums[i]] += mymap[nums[i] + 1];
+		if (mymap.count(nums[i] - 1) && mymap[nums[i]] > mymap[nums[i] - 1])//更新左边界元素的序列数量
+			mymap[nums[i] - mymap[nums[i] - 1]] = mymap[nums[i]];
+		if (mymap.count(nums[i] + 1) && mymap[nums[i]] > mymap[nums[i] + 1])//更新右边界元素的序列数量
+			mymap[nums[i] + mymap[nums[i] + 1]] = mymap[nums[i]];
+		if (mymap[nums[i]] > maxVal)
+			maxVal = mymap[nums[i]];
+	}
+	return maxVal;
+}
