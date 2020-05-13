@@ -1,0 +1,52 @@
+给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。
+说明：不允许修改给定的链表。
+思路：利用一个set表记录访问过的结点，如果指针指向的下一个结点存在于set表中，则找到目标结点，如果最终为NULL，则无环
+时间复杂度O(N),空间复杂度O(N)
+ListNode *detectCycle(ListNode *head) {
+  unordered_set<ListNode*>myset;
+	while (head)
+	{
+		if (myset.count(head->next))
+			return head->next;
+		else
+			myset.insert(head);
+        head = head->next;
+	}
+	return NULL;
+}
+
+我们利用已知的条件：慢指针移动 1 步，快指针移动 2 步，来说明它们相遇在环的入口处。（下面证明中的 tortoise 表示慢指针，hare 表示快指针）
+设到环首的距离为F，在距离环首a的地方指针相遇，在走b步到达环首，两个指针第一次相遇的时候快指针正好超过慢指针一圈，即a+b，
+同时有2倍的步长可得
+2⋅distance(tortoise)=distance(hare)
+2(F+a)=F+a+b+a
+F = b，换句话说，当得到相遇点后，首指针走F步，指针也走F步会相遇
+ListNode* getIntersect(ListNode *head)//相遇结点
+{
+	ListNode* fast = head;
+	ListNode* slow = head;
+	while (fast && fast->next)
+	{
+		slow = slow->next;
+		fast = fast->next->next;
+		if (slow == fast)
+			return fast;
+	}
+	return NULL;
+	
+}
+ListNode *detectCycle(ListNode *head) {
+
+	if (!head)
+		return head;
+	ListNode*  intersect = getIntersect(head);
+	if (!intersect)
+		return NULL;
+	while (head != intersect)
+	{
+		head = head->next;
+		intersect = intersect->next;
+	}
+	return intersect;
+}
