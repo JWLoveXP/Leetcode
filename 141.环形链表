@@ -1,0 +1,21 @@
+给定一个链表，判断链表中是否有环。
+为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。
+思路：快慢指针，快指针每次走两步，慢指针每次走一步，如果有环，那么一定会在某一处相遇
+bool hasCycle(ListNode *head) {
+  ListNode* fast = head; 
+	ListNode* slow = head;
+	while (fast)
+	{
+		fast = fast->next;
+		if (fast == slow)
+			return true;
+		if (fast)
+			fast = fast->next;
+		else
+			return false;
+		if (fast == slow)
+			return true;
+		slow = slow->next;
+	}
+	return false;
+    }
