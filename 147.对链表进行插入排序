@@ -1,0 +1,42 @@
+对链表进行插入排序
+思路：设置一个指向当前结点的指针和之前当前结点指针前一个结点的指针。利用比较前置结点和当前排序结点大小来进行加速
+时间复杂度O(N),空间复杂度O(1)
+ListNode* insertionSortList(ListNode* head) {
+	if (!head || !head->next)
+		return head;
+	ListNode* p = head->next;//当前排序结点
+	ListNode* pre = head;//前置结点
+	ListNode* q;
+	ListNode* temp;
+	while (p)
+	{
+		
+		if (head->val >= p->val) //当前指针大于头结点
+		{
+			pre->next = p->next;//前置指针指向p指针后一个元素
+			p->next = head;
+			head = p;
+			p = pre->next;
+		}
+		else
+		{
+			if (pre->val <= p->val)//当前排序结点值大于前置结点的值，移动到后一结点
+			{
+				p = p->next;
+				pre = pre->next;
+			}
+			else
+			{
+				q = head;
+				while (q->next->val <= p->val)//找到比它大的结点的前一个结点
+					q = q->next;
+				pre->next = p->next;
+				p->next = q->next;//交换
+				q->next = p;
+				p = pre->next;//指向下一个排序结点
+			}
+		}
+	}
+
+	return head;
+}
