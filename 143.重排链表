@@ -1,0 +1,58 @@
+给定一个单链表 L：L0→L1→…→Ln-1→Ln ，
+将其重新排列后变为： L0→Ln→L1→Ln-1→L2→Ln-2→…
+你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+
+思路1：用一个数组存放链表中的元素，然后在取出来交换节点
+时间复杂度O(N),空间复杂度O(N)
+void reorderList(ListNode* head) {
+	if (!head)
+		return;
+	vector<ListNode*>r;
+	while (head)
+	{
+		r.push_back(head);
+		head = head->next;
+	}
+	int len = r.size();
+	for (int i = 0; i < (len / 2); ++i)
+	{
+		r[i]->next = r[len - i - 1];
+		r[len - i - 1]->next = r[i + 1];
+	}
+	r[len / 2]->next = NULL;
+}
+思路2：首先找到链表的中点，可以通过快慢指针实现。然后将后一半链表反转（头插法），最后将后一半链表插到前面链表中
+时间复杂度O(N),空间复杂度O(1),时间复杂度系数会大于思路1
+void reorderList(ListNode* head) {
+	if (!head)
+		return;
+	ListNode *fast = head;
+	ListNode *slow = head;
+	while (fast && fast->next)//找中点
+	{
+		fast = fast->next->next;
+		slow = slow->next;
+	}
+	ListNode* p = slow->next;
+	slow->next = NULL;
+	ListNode *temp;
+	while (p)//尾插法转变顺序
+	{
+		temp = p;
+		p = p->next;
+		temp->next = slow->next;
+		slow->next = temp;
+	}
+	p = slow->next;
+	slow->next = NULL;
+	//插入
+	while (head && p)
+	{
+		temp = p;
+		p = p->next;
+		temp->next = head->next;
+		head->next = temp;
+		head = head->next->next;
+	}
+
+}
