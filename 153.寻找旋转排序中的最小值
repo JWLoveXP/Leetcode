@@ -1,0 +1,28 @@
+假设按照升序排序的数组在预先未知的某个点上进行了旋转。
+( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。
+请找出其中最小的元素。
+你可以假设数组中不存在重复元素
+方法：二分查找
+时间复杂度O(N)，空间复杂度O(1)
+int findMin(vector<int>& nums) {
+	int len = nums.size();
+	int left = 0;
+	int right = len - 1;
+	if (len == 1 || nums[left] < nums[right])//一个元素或者未旋转
+		return nums[0];
+	int mid;
+	while (true)
+	{
+		mid = (left + right) / 2;
+		if (nums[mid] > nums[right])//中间元素值大于右边元素
+			left = mid + 1;
+		else
+		{
+			if (nums[mid] > nums[mid - 1])//mid为最小值，最小值应该小于两边
+				right = mid - 1;
+			else
+				break;
+		}
+	}
+	return nums[mid];
+}
