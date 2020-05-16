@@ -1,0 +1,39 @@
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+
+    push(x) —— 将元素 x 推入栈中。
+    pop() —— 删除栈顶的元素。
+    top() —— 获取栈顶元素。
+    getMin() —— 检索栈中的最小元素。
+方法：使用一个辅助栈min_st来记录最小值，在push时，如果min_st为空，则入栈，如果非空，那么和栈顶元素比较，如果小于等于栈顶元素就入栈，即更新最小值
+在pop时，则判断栈st和min_st栈顶元素是否相同，相同则也出栈，最小值变成下一个元素。而最小值的话就是min_st栈顶元素。
+class MinStack {
+public:
+	/** initialize your data structure here. */
+	stack<int>st;
+	stack<int>min_st;
+	MinStack() {
+
+	}
+
+	void push(int x) {
+		st.push(x);
+		if (min_st.empty())
+			min_st.push(x);
+		else if (x <= min_st.top())
+			min_st.push(x);
+	}
+
+	void pop() {
+		if (min_st.top() == st.top())
+			min_st.pop();
+		st.pop();
+	}
+
+	int top() {
+		return st.top();
+	}
+
+	int getMin() {
+		return min_st.top();
+	}
+};
