@@ -1,0 +1,62 @@
+编写一个程序，找到两个单链表相交的起始节点
+
+方法1：分别变量两个链表，记录长度，然后使长的链表先走几步，使得两个链表一样长，然后一起遍历
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+    if (!headA || !headB)
+		return NULL;
+	int numA = 0, numB = 0;
+	ListNode* p = headA;
+	while (p)
+	{
+		numA++;
+		p = p->next;
+
+	}
+	p = headB;
+	while (p)
+	{
+		numB++;
+		p = p->next;
+	}
+	while (numA > numB)
+	{
+		headA = headA->next;
+		numA--;
+	}
+	while (numB > numA)
+	{
+		headB = headB->next;
+		numB--;
+	}
+	while (headA)
+	{
+		if (headA != headB)
+		{
+			headA = headA->next;
+			headB = headB->next;
+		}
+		else
+			break;
+	}
+	return headA;
+    }
+ 方法2：双指针法A,B，分别指向两个头结点，当A结点为NULL时，使其指向另一个头结点，同理B结点为NULL时，指向另一个头结点，那么最终这个两个结点会相遇，
+ 没有相交结点，则相交于NULL结点，否则相交于重复结点
+ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+	if (!headA || !headB)
+		return NULL;
+	ListNode* p = headA;
+	ListNode* q = headB;
+	while (p != q)
+	{
+		if (p == NULL)
+			p = headB;
+		else
+			p = p->next;
+		if (q == NULL)
+			q = headA;
+		else
+			q = q->next;
+	}
+	return p;
+  }
