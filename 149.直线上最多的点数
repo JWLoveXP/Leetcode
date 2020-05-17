@@ -1,0 +1,43 @@
+给定一个二维平面，平面上有 n 个点，求最多有多少个点在同一条直线上
+方法：对于每个点，计算经过该点的直线斜率，得到最多的点的直线。
+在计算机中，小数的表达是不完全的，所以使用分数的形式表达斜率，用gcd函数计算最大公约数，很巧妙。使用string形式表达斜率
+int gcd(int a, int b)//最大公约数
+{
+	if (b == 0) {
+		return a;
+	}
+
+	return gcd(b, a % b);
+}
+int maxPoints(vector<vector<int>>& points) {
+	if (points.size() < 3) {
+		return points.size();
+	}
+
+	int result = 0;
+	for (int i = 0; i < points.size(); ++i) {//经过第i个点的直线
+		int duplicate = 0;
+		int curMax = 0;
+		unordered_map<string, int> oneline;
+
+		for (int j = i + 1; j < points.size(); ++j) {
+			if (points[i][0] == points[j][0] && points[i][1] == points[j][1]) {
+				duplicate += 1;
+				continue;
+			}
+
+			int diffX = points[j][0] - points[i][0];
+			int diffY = points[j][1] - points[i][1];
+
+			int temp = gcd(diffX, diffY);
+			string key = to_string(diffX / temp) + "/" + to_string(diffY / temp);
+
+			oneline[key]++;
+			curMax = max(curMax, oneline[key]);
+		}
+
+		result = max(result, curMax + duplicate + 1);
+	}
+
+	return result;
+}
