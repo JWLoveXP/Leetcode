@@ -4,6 +4,7 @@
 注意数组中可能存在重复的元素
 方法：数组中为两个升序数组，使用两个指针left和right，以及mid指针，当nums[mid]>nums[right]时，mid在左边的升序数组，left=mid+1,
 当nums[mid] < nums[right]时，mid在右边的升序数组，right = mid, 当nums[mid] == nums[right]时，为了缩小查找范围，安全的方法是将右边界指针减一
+时间复杂度O(log2N)，最坏情况O(N)，而无重复的数组则为O(log2N)，空间复杂度O(1)
 int findMin(vector<int>& nums) {
 	int left = 0;
 	int right = nums.size() - 1;
