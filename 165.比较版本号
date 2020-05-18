@@ -1,0 +1,66 @@
+比较两个版本号 version1 和 version2。
+如果 version1 > version2 返回 1，如果 version1 < version2 返回 -1， 除此之外返回 0。
+你可以假设版本字符串非空，并且只包含数字和 . 字符。
+ . 字符不代表小数点，而是用于分隔数字序列。
+例如，2.5 不是“两个半”，也不是“差一半到三”，而是第二版中的第五个小版本。
+你可以假设版本号的每一级的默认修订版号为 0。例如，版本号 3.4 的第一级（大版本）和第二级（小版本）修订号分别为 3 和 4。其第三级和第四级修订号均为 0
+
+方法：双指针，一个指针指向version1，一个指向version2。
+需要注意：1.每个版本号都有四个修订号，有些后续版本号为0，省略了，因此，当一个指针达到末尾，而另一个未达到末尾，达到末尾的返回"0"
+         2.有的修订号以0开始，需要去掉，但是还有为"0"的修订号，需额外注意
+         3，字符串的比较，当两个字符串长度一样时可以直接用比较运算符比较，当长度不一致，长的大
+由于只有一次遍历，时间复杂度O(max(M+N))，空间复杂度O(M+N)
+string subString(string& s, int& start)
+{
+	if (start > s.size())
+		return "0";
+	int i = start;
+	while (start < s.size() && s[start] != '.')
+		start++;
+	while (i < (start - 1))
+	{
+		if (s[i] == '0')
+			i++;
+		else
+			break;
+	}
+	return s.substr(i, start - i);
+}
+int compare(string& s1, string& s2)
+{
+	if (s1.size() > s2.size())
+		return 1;
+	else if (s1.size() < s2.size())
+		return -1;
+	else
+	{
+		if (s1 > s2)
+			return 1;
+		else if (s1 < s2)
+			return -1;
+		else
+			return 0;
+	}
+}
+int compareVersion(string version1, string version2) {
+	int i = 0, j = 0;
+	string res1, res2;
+	int flag;
+	while (i < version1.size() || j < version2.size())
+	{
+		res1 = subString(version1, i);
+		res2 = subString(version2, j);
+		flag = compare(res1, res2);
+		if (flag == 1)
+			return 1;
+		else if (flag==-1)
+			return -1;
+		else
+		{
+			i++;
+			j++;
+		}
+	}
+		
+	return 0;
+}
