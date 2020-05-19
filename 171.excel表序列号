@@ -1,0 +1,20 @@
+给定一个Excel表格中的列名称，返回其相应的列序号。
+例如，
+    A -> 1
+    B -> 2
+    C -> 3
+    ...
+    Z -> 26
+    AA -> 27
+    AB -> 28 
+    ...
+方法：相当于10进制转变成了26进制， (s[i] - 'A' + 1)用括号先计算可以防止测试用例过界
+时间复杂度O(N),空间复杂度O(1)
+int titleToNumber(string s) {
+	int val = 0;
+	for (int i = 0; i < s.size(); i++)
+	{
+		val = val * 26 + (s[i] - 'A' + 1);
+	}
+	return val;
+}
