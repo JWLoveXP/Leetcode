@@ -1,0 +1,41 @@
+给定一个大小为 n 的数组，找到其中的多数元素。多数元素是指在数组中出现次数大于 ⌊ n/2 ⌋ 的元素。
+你可以假设数组是非空的，并且给定的数组总是存在多数元素
+
+方法1：哈希表，记录每个元素出现的次数
+时间复杂度O(N),空间复杂度O(1)
+int majorityElement(vector<int>& nums) {
+  int len = nums.size();
+	int num = len / 2;
+	unordered_map<int, int>mymap;
+	for (int i = 0; i < len; i++)
+	{
+		mymap[nums[i]]++;
+		if (mymap[nums[i]] > num)
+			return nums[i];
+	}
+	return nums[0];
+}
+
+方法2：由于有元素数量大于一半，那么就初始化元素val为第一个元素，出现次数count为1，遍历，当前元素等于val，则count++,不等于时，如果count大于0，则
+count--，等于0，则更新val为当前元素。由于目标值大于数组一半，遍历一遍则最后剩下的就是目标元素
+int majorityElement(vector<int>& nums) {
+	int val = nums[0];
+	int count = 1;
+	int len = nums.size();
+	for (int i = 1; i < len; i++)
+	{
+		if (count == 0)
+		{
+			val = nums[i];
+			count++;
+		}
+		else
+		{
+			if (val == nums[i])
+				count++;
+			else
+				count--;
+		}
+	}
+	return val; 
+}
