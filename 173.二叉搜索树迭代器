@@ -1,0 +1,58 @@
+实现一个二叉搜索树迭代器。你将使用二叉搜索树的根节点初始化迭代器。
+调用 next() 将返回二叉搜索树中的下一个最小的数
+next() 和 hasNext() 操作的时间复杂度是 O(1)，并使用 O(h) 内存，其中 h 是树的高度。
+你可以假设 next() 调用总是有效的，也就是说，当调用 next() 时，BST 中至少存在一个下一个最小的数。
+
+方法：利用栈来模拟中序遍历，先访问左元素，在访问右元素。栈顶为当前最小的元素，出栈后需要判断右边是否还有元素。
+struct TreeNode {
+     int val;
+     TreeNode *left;
+     TreeNode *right;
+     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+class BSTIterator {
+public:
+	stack<TreeNode*>st;
+	BSTIterator(TreeNode* root) {
+		while (root)
+		{
+			st.push(root);
+			root = root->left;
+		}
+	}
+
+	/** @return the next smallest number */
+	int next() {
+		TreeNode* p = st.top();
+		st.pop();
+		int res = p->val;
+		p = p->right;
+		while (p)
+		{
+			st.push(p); 
+			p = p->left;
+		}
+		return res;
+	}
+
+	/** @return whether we have a next smallest number */
+	bool hasNext() {
+		if (st.empty())
+			return false;
+		else
+			return true;
+	}
+};
+
+//176.阶乘后的0
+int trailingZeroes(int n) {
+	int res = 0;
+	while (n > 0)
+	{
+		res += n / 5;
+		n = n / 5;
+	}
+	return res;
+
+
+}
