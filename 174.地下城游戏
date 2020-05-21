@@ -1,0 +1,84 @@
+一些恶魔抓住了公主（P）并将她关在了地下城的右下角。地下城是由 M x N 个房间组成的二维网格。我们英勇的骑士（K）最初被安置在左上角的房间里
+他必须穿过地下城并通过对抗恶魔来拯救公主。
+骑士的初始健康点数为一个正整数。如果他的健康点数在某一时刻降至 0 或以下，他会立即死亡。
+有些房间由恶魔守卫，因此骑士在进入这些房间时会失去健康点数（若房间里的值为负整数，则表示骑士将损失健康点数）；其他房间要么是空的（房间里的值为 0），
+要么包含增加骑士健康点数的魔法球（若房间里的值为正整数，则表示骑士将增加健康点数）。
+为了尽快到达公主，骑士决定每次只向右或向下移动一步。
+编写一个函数来计算确保骑士能够拯救到公主所需的最低初始健康点数。
+例如，考虑到如下布局的地下城，如果骑士遵循最佳路径 右 -> 右 -> 下 -> 下，则骑士的初始健康点数至少为 7。
+-2 (K) 	-3 	3
+-5 	-10 	1
+10 	30 	-5 (P)
+说明:
+    骑士的健康点数没有上限。
+    任何房间都可能对骑士的健康点数造成威胁，也可能增加骑士的健康点数，包括骑士进入的左上角房间以及公主被监禁的右下角房间。
+方法1：回溯，遍历所有的路径，但是会超时
+void findMinimunHP(vector<vector<int>>& dungeon, int row, int col, int& minHP, int curHP, int lastHP)
+{
+	if (row == dungeon.size() - 1 && col == dungeon[0].size()-1)
+	{
+		if (curHP >0)
+		{
+			minHP = 1;
+		}
+		else
+		{
+			curHP *= -1;
+			curHP++;
+			if (minHP > curHP)
+				minHP = curHP;
+		}
+		return;
+	}
+	if (curHP < 0 && minHP < abs(curHP))
+		return;
+	if (row < dungeon.size() - 1)//向下
+	{
+		if (lastHP + dungeon[row + 1][col] < curHP)
+			findMinimunHP(dungeon, row + 1, col, minHP, lastHP + dungeon[row + 1][col], lastHP + dungeon[row + 1][col]);
+		else
+			findMinimunHP(dungeon, row + 1, col, minHP, curHP, lastHP + dungeon[row + 1][col]);
+	}
+	if (col < dungeon[0].size() - 1)//向右
+	{
+		if (lastHP + dungeon[row][col + 1] < curHP)
+			findMinimunHP(dungeon, row, col + 1, minHP, lastHP + dungeon[row][col + 1], lastHP + dungeon[row][col + 1]);
+		else
+			findMinimunHP(dungeon, row, col + 1, minHP, curHP, lastHP + dungeon[row][col + 1]);
+	}
+
+}
+int calculateMinimumHP1(vector<vector<int>>& dungeon) {
+	int minHP = INT_MAX;
+	findMinimunHP(dungeon, 0, 0, minHP, dungeon[0][0], dungeon[0][0]);
+	return minHP;
+}
+
+方法2：动态规划，dp[i][j]代表到达（i，j）点需要的血量。对于每个格子，至少得有一点血量
+如果从左上到右下，对于（i，j）的最佳路径对于下一个节点可能不是最佳的,举个例子，到达（i，j）点两条路径，A路径到达该点需要5点血，剩余3点，
+B路径到达该点需要7点，剩余10点血，对于（i，j）A路径更优。而（i，j+1）需要消耗7点，此时A路径需要消耗9点血，而B路径还是7点，从而产生冲突。
+因此，这个题中可以从右下到左上，从而能避免这个问题
+转移方程 dp[i][j] = max(1, min(dp[i + 1][j], dp[i][j + 1]) - dungeon[i][j])
+min(dp[i + 1][j], dp[i][j + 1])选择两条路径中需要血量少的路径
+min(dp[i + 1][j], dp[i][j + 1]) - dungeon[i][j]计算出当前点到右下需要的血量，如果小于等于1，说明当前节点是补血的，
+那么只要有保证勇士有一点血到达该格子就像，所有取1，如果大于1，那么说明勇士需要先具备这个血量。所以取大值
+int calculateMinimumHP(vector<vector<int>>& dungeon) {
+	
+	int row = dungeon.size();
+	int col = dungeon[0].size();
+	vector<vector<int>>dp(row, vector<int>(col, 0));
+	dp[row - 1][col - 1] = max(1, 1 - dungeon[row - 1][col - 1]);
+	int i, j;
+	for (i = row - 2; i >= 0; i--)
+		dp[i][col - 1] = max(1, dp[i + 1][col - 1] - dungeon[i][col - 1]);
+	for (j = col - 2; j >= 0; j--)
+		dp[row - 1][j] = max(1, dp[row - 1][j + 1] - dungeon[row - 1][j]);
+	for (i = row - 2; i >= 0; i--)
+	{
+		for (j = col - 2; j >= 0; j--)
+		{
+			dp[i][j] = max(1, min(dp[i + 1][j], dp[i][j + 1]) - dungeon[i][j]);
+		}
+	}
+	return dp[0][0];
+}
