@@ -1,0 +1,67 @@
+所有 DNA 都由一系列缩写为 A，C，G 和 T 的核苷酸组成，例如：“ACGAATTCCG”。在研究 DNA 时，识别 DNA 中的重复序列有时会对研究非常有帮助。
+编写一个函数来查找 DNA 分子中所有出现超过一次的 10 个字母长的序列（子串）
+
+方法1：线性滑窗+哈希表
+使用一个固定长度的滑窗进行字串提取，然后将其添入哈希表，最后对于哈希表中次数大于1的字串加入最后的数组
+时间复杂度O((N-L)*L),空间复杂度O((N-L)*L)
+N-L代表遍历的时间复杂度，L代表切片的时间复杂度
+vector<string> findRepeatedDnaSequences(string s) {
+	unordered_map<string, int>mymap;
+	vector<string>res;
+	string temp;	for (int i = 9; i < s.size(); ++i)
+	{
+		mymap[s.substr(i - 9, 10)]++;
+	}
+	for (auto r : mymap)
+	{
+		if (r.second > 1)
+			res.push_back(r.first);
+	}
+	return res;
+    }
+方法2：线性滑窗每个字串都会取出来，从而造成切片的时间复杂度，使用位操作，利用掩码实现常数时间窗口切片
+对于固定窗口的切片，上一个切片和下一个切片有9个字符是一致的，只有上一个切片首部和下一个切片尾部字符不一致，所以利用位运算，新字符添加到尾部，
+再将首部字符去掉，就可以得到下一个切片
+A−>0,C−>1,G−>2,T−>3，将字符转化成数字
+加入尾部
+bitmask << 2;//左移
+bitmask |= dict[s[i]]
+去掉首部
+需要去掉2L和2L+1字符
+bitmask &= ~(3 << 2 * L);//将首部2L和2L+1数字去掉
+3代表11，然后左移2L后在2L和2L+1位置为11，其他为0，然后取反后2L和2L+1位置为00，从而去掉2L和2L+1数字
+vector<string> findRepeatedDnaSequences(string s) {
+	unordered_map<char, int>dict;
+	dict['A'] = 0;
+	dict['C'] = 1; 
+	dict['G'] = 2;
+	dict['T'] = 3;
+
+	int L = 10;
+	int len = s.size(); 
+	int bitmask = dict[s[0]];
+	int i;
+	for (i = 1; i < L; ++i)//初始化二进制编码
+	{
+		bitmask <<= 2;
+		bitmask |= dict[s[i]];
+	}
+	unordered_map<int, int>mymap;
+	mymap[bitmask]++;
+	unordered_set<string>r;
+	for (i = L; i < len; i++)
+	{
+		bitmask <<= 2;
+		bitmask |= dict[s[i]];//加入尾部数字
+		bitmask &= ~(3 << 2 * L);//将首部2L和2L+1数字去掉
+		mymap[bitmask]++;
+		if (mymap[bitmask] > 1)
+			r.insert(s.substr(i-L+1, L));
+	}
+	vector<string>res;
+	for (auto i : r)
+	{
+		res.push_back(i);
+	}
+	return res;
+}
