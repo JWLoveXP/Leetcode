@@ -1,0 +1,30 @@
+给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值
+
+方法：由于树的形状不确定，以左右指针遍历的方式无法实现访问，所以最终使用了广度优先搜索，通过层序遍历，取得最右边的节点
+时间复杂度O(N)，空间复杂度O(N)
+vector<int> rightSideView(TreeNode* root) {
+	vector<int>res;
+	if (!root)
+		return res;
+	queue<TreeNode*>q;
+	q.push(root);
+	
+	int len, i;
+	TreeNode* temp;
+	while (!q.empty())
+	{
+		len = q.size();
+		for (i = 0; i < len; i++)
+		{
+			temp = q.front();
+			q.pop();
+			if (i == len - 1)
+				res.push_back(temp->val);
+			if (temp->left)
+				q.push(temp->left);
+			if (temp->right)
+				q.push(temp->right);
+		}
+	}
+	return res;
+}
