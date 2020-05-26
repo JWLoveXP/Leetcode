@@ -1,0 +1,32 @@
+给定两个字符串 s 和 t，判断它们是否是同构的。
+如果 s 中的字符可以被替换得到 t ，那么这两个字符串是同构的。
+所有出现的字符都必须用另一个字符替换，同时保留字符的顺序。两个字符不能映射到同一个字符上，但字符可以映射自己本身
+
+方法：采用两个哈希表，第一个map记录s到t的映射，由于两个字符不能映射到同一个字符上，所以还得考虑映射到的字符使用已经用过，所以用一个set表记录
+时间复杂度O(N)，空间复杂度O(N)
+bool isIsomorphic(string s, string t) {
+	unordered_map<char, char>mymap;
+	unordered_set<char>myset;
+	int i, len = s.size();
+	if (len == 0)
+		return true;
+	for (int i = 0; i < len; i++)
+	{
+		if (mymap.count(s[i]) == 0)//未存在
+		{
+			if (myset.count(t[i]) == 0)//未用过的字符
+			{
+				myset.insert(t[i]);
+				mymap[s[i]] = t[i];
+			}
+			else
+				return false;//已经有映射过，则错误
+		}
+		else
+		{
+			if (mymap[s[i]] != t[i])//已经存在，但是前一次映射的字符与现在的不同
+				return false;
+		}
+	}
+	return true;
+}
