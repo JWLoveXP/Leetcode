@@ -1,0 +1,54 @@
+统计所有小于非负整数 n 的质数的数量
+方法1，统计每个数字是否是质数
+计算一个数是否是质数有两种优化方法，第一种只计算到sqrt(n)，因为在计算小值时已经计算大值的可能。第二种优化方法，排除质数2，3外，其余的质数都在6的周围
+如5和7，因此n % 6 != 1 && n % 6 != 5时，该数一定不是质数。但是满足取余6等于1或者5时，有可能也不是质数，比如49，是7*7的结果，所以还需额外判断
+是否是质数的倍数
+bool isPrimes(int n)
+{
+
+	if (n == 2 || n == 3)
+		return true;
+	if (n % 6 != 1 && n % 6 != 5)
+		return false;
+	int temp = sqrt(n);
+	for (int i = 5; i <= temp; i += 6)
+	{
+		if (n % i == 0  || n % (i + 2) == 0)//判断是否是质数的倍数
+			return false;
+	}
+	return true;
+	//int r = sqrt(n);
+	//for (int i = 2; i <= r; i++)
+	//{
+	//	if (n%i == 0)
+	//		return false;
+	//}
+	//return true;
+}
+int countPrimes(int n) {
+	int count = 0;
+	if (n == 0)
+		return 0;
+	
+	for (int i = 2; i < n; i++)
+	{
+		if (isPrimes(i))
+			count++;
+	}
+	return count;
+}
+方法2：以上的方法需要有个额外的函数判断是否是质数，而这个方法的原理利用质数表来实现，质数的倍数不可能是质数
+int countPrimes(int n) {
+	vector<int>isPrimes(n, true);//质数表
+	int count = 0;
+	for (int i = 2; i < n; i++)
+	{
+		if (isPrimes[i])
+		{
+			count++;
+			for (int j = i * 2; j < n; j += i)//将质数的倍数置为false
+				isPrimes[j] = false;
+		}
+	}
+	return count;
+}
