@@ -1,0 +1,50 @@
+现在你总共有 n 门课需要选，记为 0 到 n-1。
+在选修某些课程之前需要一些先修课程。 例如，想要学习课程 0 ，你需要先完成课程 1 ，我们用一个匹配来表示他们: [0,1]
+给定课程总量以及它们的先决条件，返回你为了学完所有课程所安排的学习顺序。
+可能会有多个正确的顺序，你只要返回一种就可以了。如果不可能完成所有课程，返回一个空数组
+
+该题本质上是检测是否为有向无环图，如果是，则能够学习，否则不能
+方法：广度优先搜索，创建入读表和邻接矩阵表，邻接矩阵表中元素意义为A为其邻接元素的前置条件,A指向邻接元素
+对于0入度队列中的课程，可以直接学习，然后将邻接矩阵表中以该课程为前置条件的课程入度减1，当入度为0时，将其加入队列，并加入学习数组
+vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+	//广度优先搜索
+	vector<int>res;
+	vector<int>indegrees(numCourses, 0);
+	vector<vector<int>>adjacent(numCourses);
+	int i;
+	for (i = 0; i < prerequisites.size(); i++)
+	{
+		indegrees[prerequisites[i][0]]++;
+		adjacent[prerequisites[i][1]].push_back(prerequisites[i][0]);
+	}
+
+	queue<int>zeros;//入度为0的课程
+	for (i = 0; i < numCourses; i++)
+	{
+		if (indegrees[i] == 0)
+		{
+			zeros.push(i);
+			res.push_back(i);
+		}
+	}
+	int temp, j;
+	while (!zeros.empty())
+	{
+		temp = zeros.front();
+		zeros.pop();
+		numCourses--; 
+		for (j = 0; j < adjacent[temp].size(); j++)
+		{
+			indegrees[adjacent[temp][j]]--;
+			if (indegrees[adjacent[temp][j]] == 0)
+			{
+				zeros.push(adjacent[temp][j]);
+				res.push_back(adjacent[temp][j]);
+			}
+		}
+	}
+	if (numCourses == 0)
+		return res;
+	else
+		return vector<int>();
+}
