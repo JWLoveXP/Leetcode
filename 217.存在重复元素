@@ -1,0 +1,21 @@
+给定一个整数数组，判断是否存在重复元素。
+如果任意一值在数组中出现至少两次，函数返回 true 。如果数组中每个元素都不相同，则返回 false 
+
+方法1：排序+线性扫描
+时间复杂度O(N),空间复杂度O(1)
+
+方法2：哈希表，存放数据
+时间复杂度O(N)，空间复杂度O(N)
+
+bool containsDuplicate(vector<int>& nums) {
+	int len = nums.size();
+	unordered_set<int>dict;
+	for (int i = 0; i < len; i++)
+	{
+		if (dict.count(nums[i]) == 0)
+			dict.insert(nums[i]);
+		else
+			return true;
+	}
+	return false;
+}
