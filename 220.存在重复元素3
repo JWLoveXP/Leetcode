@@ -1,0 +1,54 @@
+给定一个整数数组，判断数组中是否有两个不同的索引 i 和 j，使得 nums [i] 和 nums [j] 的差的绝对值最大为 t，并且 i 和 j 之间的差的绝对值最大为 ķ
+
+方法1：暴力法，每个元素遍历其前k-1个数，超时
+bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+
+	int len = nums.size();
+	if (k == 0 || len < 2)
+		return false;
+	int i, j, left;
+	vector<long long> num(nums.begin(), nums.end());
+	long long T = t;
+	for (i = 1; i < len; i++)
+	{
+		left = i - k > 0 ? i - k : 0;
+		for (j = i - 1; j >= left; j--)
+		{
+			if (abs(num[i] - num[j]) <= T)
+				return true;
+		}
+	}
+	return false;
+}
+
+方法2：桶排序，一个桶的大小为t+1。
+如果窗口中有两个元素在一个桶中,那么返回true，如果没有，在比较左边桶和右边桶，如果小于t，返回true,对于其他的桶肯定不会满足条件
+对于负数的桶如[-6, -1]为第-1个桶，但是-6/6=-1，-1/6 =0，所以得加1，即(num + 1) / w - 1，对于正数则num / w
+当窗口右移时，最左边的元素得出桶
+long getId(long long num, long long w)
+{
+	return num < 0 ? (num + 1) / w - 1 : num / w;
+}
+bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+	if (t < 0)
+		return false;
+	unordered_map<int, int>dict;
+	int len = nums.size();
+	vector<long long>num(nums.begin(), nums.end());
+	long long w = t;
+	w++;
+	for (int i = 0; i < len; i++)
+	{
+		if (i > k)//删除窗口中的第一个元素
+			dict.erase(getId(num[i - k - 1], w));
+		long long id = getId(num[i], w);
+		if (dict.count(id) == 1)
+			return true;
+		if (dict.count(id - 1) && num[i] - num[dict[id - 1]] < w)
+			return true;
+		if (dict.count(id + 1) && num[dict[id + 1]] - num[i] < w)
+			return true;
+		dict[id] = i; 
+	}
+	return false;
+}
