@@ -1,0 +1,120 @@
+给定一个二维网格 board 和一个字典中的单词列表 words，找出所有同时在二维网格和字典中出现的单词。
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。
+同一个单元格内的字母在一个单词中不允许被重复使用
+
+方法：前缀树+回溯剪支
+当前缀不再前缀树中则不继续判断，使用哈希表存放结果，防止重复结果
+class Trie
+{
+	bool isEnd = false;
+	//Trie* next[26]{ NULL };
+	Trie* next[26];
+
+public:
+	Trie(){
+		memset(next, 0, sizeof(Trie));
+	};
+	void insert(string& word)
+	{
+		Trie* node = this;
+		for (char c : word)
+		{
+			if (node->next[c - 'a'] == NULL)
+				node->next[c - 'a'] = new Trie();
+			node = node->next[c - 'a'];
+		}
+		node->isEnd = true;
+	}
+	bool search(string& word)
+	{
+		Trie* node = this;
+		for (char c : word)
+		{
+			node = node->next[c - 'a'];
+			if (node == NULL)
+				return false;
+		}
+		return node->isEnd;
+	}
+	bool startWith(string& word)
+	{
+		Trie* node = this;
+		for (char c : word)
+		{
+			node = node->next[c - 'a'];
+			if (node == NULL)
+				return false;
+		}
+		return true;
+	}
+};
+void find(vector<vector<char>>& board, Trie* node, unordered_set<string>&res, string s, int row, int col, int i, int j)
+{
+	int flag = 0;
+	if (node->search(s))
+		res.insert(s);
+	char c;
+	if (node->startWith(s))
+	{
+		//上边
+		if (i > 0 && board[i-1][j] != '#')//未访问过
+		{
+			c = board[i - 1][j];
+			board[i - 1][j] = '#';
+			find(board, node, res, s + c, row, col, i - 1, j);
+			board[i - 1][j] = c;
+		}
+		//下边
+		if (i < row - 1 && board[i + 1][j] != '#')//未访问过
+		{
+			c = board[i + 1][j];
+			board[i + 1][j] = '#';
+			find(board, node, res, s + c, row, col, i + 1, j);
+			board[i + 1][j] = c;
+		}
+		//左边
+		if (j > 0 && board[i][j - 1] != '#')//未访问过
+		{
+			c = board[i][j - 1];
+			board[i][j - 1] = '#';
+			find(board, node, res, s + c, row, col, i, j - 1);
+			board[i][j - 1] = c;
+		}
+		//下边
+		if (j < col- 1 && board[i][j + 1] != '#')//未访问过
+		{
+			c = board[i][j + 1];
+			board[i][j + 1] = '#';
+			find(board, node, res, s + c, row, col, i, j+1);
+			board[i][j + 1] = c;
+		}
+	}
+
+}
+vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+	Trie* node = new Trie;
+	for (string word : words)
+		node->insert(word);
+	vector<string>res;
+	int row = board.size();
+	if (row == 0)
+		return res;
+	int col = board[0].size();
+	if (col == 0)
+		return res;
+	string c;
+	unordered_set<string>ss;
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			c = board[i][j];
+			board[i][j] = '#';
+			find(board, node, ss, c, row, col, i, j);
+			board[i][j] = c[0];
+		}
+	}
+	for (string s : ss)
+		res.push_back(s);
+	return res;
+}
