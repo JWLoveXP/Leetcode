@@ -1,0 +1,93 @@
+给出一个完全二叉树，求出该树的节点个数。
+说明：
+完全二叉树的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，
+并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2h 个节点
+方法：递归
+时间复杂度O(N)，空间复杂度O(N)
+int countNodes(TreeNode* root) {
+	if (!root)
+		return 0;
+	return countNodes(root->left) + countNodes(root->right) + 1;
+}
+
+方法：遍历
+时间复杂度O(N)，空间复杂度O(N)
+int countNodes(TreeNode* root) {
+	
+	if (!root)
+		return 0;
+	return countNodes(root->left) + countNodes(root->right) + 1;
+
+	int val = 0;
+	if (!root)
+		return val;
+	queue<TreeNode*>q;
+	q.push(root);
+	TreeNode* temp;
+	while (!q.empty())
+	{
+		temp = q.front();
+		if (temp->left)
+			q.push(temp->left);
+		if (temp->right)
+			q.push(temp->right);
+		q.pop();
+		val++;
+	}
+	return val;
+}
+方法：二叉搜索,完全二叉树最后一层元素都聚集在左边，并且每层数量为2^d，d=0,1,2...，最后一层以上所有的数量为2^d-1(等比数列)，当d为0是，数量为1；
+对于最后一层，采用二叉搜索，假设最后一层d为3，那么最后一层节点编号为0-7，找到2，mid = 3, 当在0-7中的左半部分（<=mid），在左子树中，
+将右边界左移变成0-mid，否则变成(mid+1)-7，同理判断下一次2在左边部分还是右边部分，来移动到下一层
+最后判断找到的节点是否是NULL，不是，说明mid左边（包括mid）都存在，left = mid + 1，否则说明mid右边（包括mid）不存在，right=mid-1
+bool exist(TreeNode* root, int depth, int mid)
+{
+	int left = 0;
+	int right = pow(2 , depth) - 1;
+	int m;
+	for (int i = 0; i < depth;i++)
+	{
+		m = (left + right) / 2;
+		if (mid <= m)//左子树中
+		{
+			root = root->left;
+			right = m;
+		}
+		else
+		{
+			root = root->right;
+			left = m + 1;
+		}
+	}
+	return root != NULL;
+}
+int countNodes(TreeNode* root) {
+	
+	if (!root)
+		return 0;
+	//计算深度
+	int depth = 0;
+	TreeNode* temp = root;
+	while (temp->left)
+	{
+		depth++;
+		temp = temp->left;
+	}
+	if (depth == 0)
+		return 1;
+	//最后一层元素数量为0 ~ 2^depth-1
+	int left = 1;//最左边元素已经确认存在
+	int right = pow(2, depth) - 1;
+	int mid;
+	//二分搜索
+	while(left <= right)
+	{
+		mid = (left + right) / 2;
+		temp = root;
+		if (exist(temp, depth, mid))//存在
+			left = mid + 1;
+		else
+			right = mid - 1;//不存在
+	}
+	return pow(2, depth) - 1 + left;
+    }
