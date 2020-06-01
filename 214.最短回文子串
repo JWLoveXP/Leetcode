@@ -1,0 +1,68 @@
+给定一个字符串 s，你可以通过在字符串前面添加字符将其转换为回文串。找到并返回可以用这种方式转换的最短回文串
+
+方法：暴力法,找到以第一个字符为中心的最长字串，然后补剩余字符
+时间复杂度O(N^2),空间复杂度O（1）
+超时
+bool judgePalindrome(string& s, int left, int right)
+{
+	int len = s.size();
+	while (left >= 0 && right < len)
+	{
+		if (s[left] == s[right])
+		{
+			left--;
+			right++;
+		}
+		else
+			break;
+	}
+	return left == -1;
+	
+}
+
+string shortestPalindrome(string s) {
+	int left, right;
+	int len = s.size();
+	if (len == 0)
+		return s;
+	int maxsingle = 0;
+	int maxdouble = -1;
+	int i = 1;
+	for (i = 1; i < len/2; i++)
+	{
+		if (judgePalindrome(s, i, i))
+			maxsingle = maxsingle>i ? maxsingle : i;
+		if (judgePalindrome(s, i, i-1))
+			maxdouble = maxdouble>i-1 ? maxdouble : i-1;
+	}
+	right = max(2 * maxsingle + 1, 2 * maxdouble + 2);
+	
+	string res = "";
+	for (i = len - 1; i >= right; i--)
+	{
+		res += s[i];
+	}
+	res += s;
+	return res;
+}
+
+方法2：双指针和递归
+ 考虑两个指针 i 和 j。初始化 i=0，j 从 n−1 到 0 迭代，每当 s[i]==s[j]时，将 i 增加 1，那么[0,i) 必然包括最大回文子串
+ 因为j是n-1到0的，所以从0开始的最长字串肯定会有s[i]==s[j]相等的时候，由于还存在不再从0开始的字串中的字符相等，所以只是缩短了下一次搜索的范围，
+ 通过递归的方式，直到最后一次i==n,此时整个字符都是回文串
+ string shortestPalindrome(string s)
+{
+    int n = s.size();
+    int i = 0;
+    for (int j = n - 1; j >= 0; j--) {
+        if (s[i] == s[j])
+            i++;
+    }
+    if (i == n)
+        return s;
+    string remain_rev = s.substr(i, n);
+    reverse(remain_rev.begin(), remain_rev.end());
+    return remain_rev + shortestPalindrome(s.substr(0, i)) + s.substr(i);
+}
+ 
+ 
