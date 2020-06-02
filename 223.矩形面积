@@ -1,0 +1,15 @@
+在二维平面上计算出两个由直线构成的矩形重叠后形成的总面积。
+每个矩形由其左下顶点和右上顶点坐标表示
+
+方法：数学法，也就是计算IOU
+int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+    //重叠区域坐标
+	int leftx = max(A, E);
+	int lefty = max(B, F);
+	int rightx = min(C, G);
+	int righty = min(D, H);
+	if (leftx > rightx || lefty > righty)//无重合
+		return (C - A)*(D - B) + (G - E)*(H - F);
+	else
+		return  (C - A)*(D - B) - (rightx - leftx)*(righty - lefty) + (G - E)*(H - F);//有重合，先减是为了避免溢出
+}
