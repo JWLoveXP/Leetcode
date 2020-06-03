@@ -1,0 +1,40 @@
+给定一个无重复元素的有序整数数组，返回数组区间范围的汇总
+输入: [0,1,2,4,5,7]
+输出: ["0->2","4->5","7"]
+解释: 0,1,2 可组成一个连续的区间; 4,5 可组成一个连续的区间
+方法：设置快慢指针left和right，right同right-1比较，如果相差1，则right++，否则说明出现不连续的数字，则产生一个区间，
+注意区间只有一个数字的情况，需要额外判断left和right的差值是否为1。产生区间之后，将left=right，right++
+对于最后一个区间，在遍历一遍后最后添加
+    vector<string> summaryRanges(vector<int>& nums) {
+	int len = nums.size();
+	vector<string>res;
+	if (len == 0)
+		return res;
+	int left = 0;
+	int right = 1;
+	while (right < len)
+	{
+		if(nums[right] == nums[right - 1] + 1)//注意大数问题，变成减法的会过界
+			right++;
+		else
+		{
+			string s = to_string(nums[left]);
+			if (right != (left + 1))
+			{
+				s += "->";
+				s += to_string(nums[right - 1]);
+			}
+			res.push_back(s);
+			left = right;
+			right++;
+		}
+	}
+	string s = to_string(nums[left]);
+	if (right != (left + 1))
+	{
+		s += "->";
+		s += to_string(nums[right - 1]);
+	}
+	res.push_back(s);
+	return res;
+}
