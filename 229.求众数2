@@ -1,0 +1,68 @@
+给定一个大小为 n 的数组，找出其中所有出现超过 ⌊ n/3 ⌋ 次的元素。
+说明: 要求算法的时间复杂度为 O(n)，空间复杂度为 O(1)
+
+方法：摩尔投票法，出现⌊ n/m ⌋ 次的元素，则至多有m-1个这样的元素，题中是⌊ n/3 ⌋次，则最多两个
+假设当前的标记元素为A和B
+如果访问的元素是A，则A的计数加1
+如果访问的元素是B，则B的计数加1
+如果都不是，则都减1
+当A的计数变为0时，则标记元素变成当前访问元素
+当B的计数变为0时，则标记元素变成当前访问元素
+由于题目不保证一定存在有这样的数，所以最后还需判断标记的元素的数量是否超过目标数目
+
+vector<int> majorityElement(vector<int>& nums) {
+	vector<int>res;
+	int len = nums.size();
+	if (len == 0)
+		return res;
+	int num1 = nums[0];
+	int num2 = nums[0];
+	int count1 = 0; 
+	int count2 = 0;
+
+	int i;
+	for (i = 0; i < len; i++)
+	{
+		if (num1 == nums[i])
+		{
+			count1++;
+			continue;
+		}
+		if (num2 == nums[i])
+		{
+			count2++;
+			continue;
+		}
+		if (count1 == 0)
+		{
+			num1 = nums[i];
+			count1++;
+			continue;
+		}
+		if (count2 == 0)
+		{
+			num2 = nums[i];
+			count2++;
+			continue;
+		}
+		count1--;
+		count2--;
+	}
+	count1 = 0;
+	count2 = 0;
+	for (int num : nums)
+	{
+		if (num1 == num)
+		{
+			count1++;
+			continue;
+		}
+		if (num2 == num)
+			count2++;
+	}
+	if (count1 > len / 3)
+		res.push_back(num1);
+	if (num1 != num2 && count2 > len / 3)
+		res.push_back(num2);
+	return res; 
+}
