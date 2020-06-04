@@ -1,0 +1,40 @@
+请判断一个链表是否为回文链表
+
+进阶：
+你能否用 O(n) 时间复杂度和 O(1) 空间复杂度解决此题？
+
+方法1：如果不要求空间复杂度O(1)，那么借助栈可以轻松实现
+
+方法2：快慢指针+反转后半链表
+通过快慢指针找到链表的中点，如果是奇数，则是中间节点，偶数，中间左边的节点。
+利用头插法反转后半链表，在遍历比较。一般需要将链表还原，这里未做。
+最后比较后边链表的最后一个节点是否为NULL。不使用前面链表的最后一节点是因为前半链表可能多一个节点（奇数节点时）
+bool isPalindrome(ListNode* head) {
+	if (!head || !head->next)
+		return  true;
+	ListNode* slow = head;
+	ListNode* fast = head;
+	while (fast->next && fast->next->next)
+	{
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	ListNode* dummy = new ListNode(0);
+	ListNode* p = slow->next;
+	ListNode* temp;
+	slow->next = NULL;
+	while (p)
+	{
+		temp = p; 
+		p = p->next;
+		temp->next = dummy->next;
+		dummy->next = temp;
+	}
+	p = dummy->next;
+	while (p && p->val == head->val)
+	{
+		head = head->next;
+		p = p->next;
+	}
+	return p == NULL;
+}
