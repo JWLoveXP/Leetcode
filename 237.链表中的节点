@@ -1,0 +1,8 @@
+请编写一个函数，使其可以删除某个链表中给定的（非末尾）节点，你将只被给定要求被删除的节点。
+
+方法：看清题目，给的使节点而不是值，所以直接用后面的节点的值替换然后跳过后面的值即可
+void deleteNode(ListNode* node) {
+	
+	node->val = node->next->val;
+	node->next = node->next->next;
+}
