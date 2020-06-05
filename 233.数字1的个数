@@ -1,0 +1,41 @@
+给定一个整数 n，计算所有小于等于 n 的非负整数中数字 1 出现的个数
+
+方法：按位计算1的个数，个，十，百。。。
+将数字划分成三部分，前面数字hight，当前数字cur，后面数字low，位数digit=10^i，分成三种情况
+cur = 0，那么1的个数为hight*digit，例子2304，对于十位，出现1的范围为10~2219，229 - 0 + 1 = 230
+cur = 1, 那么1的个数为hight*digit + low + 1，例子2314，对于十位，出现1的可能为0010~2314，只看高低位000-234
+234 - 0 + 1 = 255, 即hight*digit + low + 1 
+cur > 1, 那么1的个数为(hight + 1)*digit，例子2324，对于十位，出现1的可能为0010~2319，只看高低位000-239，239 - 0 + 1 = 240,
+即(hight + 1)*digit
+初始化
+	long long digit = 1;//防止过界
+	int res = 0;
+	int hight = n / 10;
+	int cur = n % 10;
+	int low = 0;
+
+int countDigitOne(int n) {
+	if (n <= 0)
+		return 0;
+	long long digit = 1;//防止过界
+	int res = 0;
+	int hight = n / 10;
+	int cur = n % 10;
+	int low = 0;
+	while (hight != 0 || cur != 0)
+	{
+		if (cur == 0)
+			res += hight * digit;
+		else if (cur == 1)
+			res += hight*digit + low + 1;
+		else
+			res += (hight + 1)*digit;
+		low += cur*digit;
+		
+		cur = hight % 10;
+		hight /= 10;
+		digit *= 10;
+	}
+	return res;
+
+}
