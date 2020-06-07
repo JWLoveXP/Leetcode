@@ -1,0 +1,57 @@
+给定一个含有数字和运算符的字符串，为表达式添加括号，改变其运算优先级以求出不同的结果。
+你需要给出所有可能的组合的结果。有效的运算符号包含 +, - 以及 *
+
+方法：动态规划，dp[i][j]表示i到j的组合结果数组，dp[i][j] = dp[i][k]和dp[k+1][j]结果的组合，i<k<j
+注意：读取数据时可能有多位数
+vector<int> diffWaysToCompute(string input) {
+	vector<int>nums;
+	vector<char>sign;
+	int len = input.size();
+	int i, res = 0;
+	for (i = 0; i < len; i++)
+	{
+		if (input[i] >= '0' && input[i] <= '9')
+			res = res * 10 + (input[i] - '0');
+		else
+		{
+			nums.push_back(res);
+			res = 0;
+			sign.push_back(input[i]);
+		}
+			
+	}
+	nums.push_back(res);
+	len = nums.size();
+	if (len <= 1)
+		return nums;
+	vector<vector<vector<int>>>dp(len, vector<vector<int>>(len, vector<int>()));
+	for (i = 0; i < len; i++)
+		dp[i][i].push_back(nums[i]); 
+	int j, k, m, n;
+	vector<int>left, right;
+	for (i = 1; i < len; i++)
+	{
+		for (j = 0; j < len - i; j++)
+		{
+			for (k = j; k < j + i; k++)
+			{
+				left = dp[j][k];
+				right = dp[k + 1][j + i];
+				for (m = 0; m < left.size(); m++)
+				{
+					for (n = 0; n < right.size(); n++)
+					{
+						if (sign[k] == '+')
+							dp[j][j + i].push_back(left[m] + right[n]);
+						else if (sign[k] == '-')
+							dp[j][j + i].push_back(left[m] - right[n]);
+						else
+							dp[j][j + i].push_back(left[m] * right[n]);
+					}
+				}
+				
+			}
+		}
+	}
+	return dp[0][len - 1];
+}
