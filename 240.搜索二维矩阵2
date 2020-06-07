@@ -6,6 +6,7 @@
 1.如果当前元素小于目标元素，那么该行不存在左边不存在目标元素，而右边因为上一行中对应列的值大于该元素，而当前行的值也大于该值，所以行加1
 2.如果当前元素大于目标元素，那么列号减1，判断左边是否有目标元素
 3.相等，返回true
+时间复杂度O(N)，空间复杂度O(1)
 bool searchMatrix(vector<vector<int>>& matrix, int target) {
 	int row = matrix.size();
 	if (row == 0)
