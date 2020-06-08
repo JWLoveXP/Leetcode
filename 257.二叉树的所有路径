@@ -1,0 +1,25 @@
+给定一个二叉树，返回所有从根节点到叶子节点的路径。
+说明: 叶子节点是指没有子节点的节点
+方法：递归+回溯
+时间复杂度O(N)，空间复杂度O(N)
+void findPath(TreeNode* root, string r, vector<string>&res)
+{
+	if (!root)
+		return;
+	if (!root->left && !root->right)
+	{
+		res.push_back(r + to_string(root->val));
+		return;
+	}
+	findPath(root->left, r + to_string(root->val) + "->", res);
+	findPath(root->right, r + to_string(root->val) + "->", res);
+}
+vector<string> binaryTreePaths(TreeNode* root) {
+	vector<string>res;
+	if (!root)
+		return res;
+	findPath(root, "", res);
+	return res;
+}
+方法2:层序遍历，维护一个节点队列和一个当该节点的路径队列
+时间复杂度O(N)，空间复杂度O(N)
