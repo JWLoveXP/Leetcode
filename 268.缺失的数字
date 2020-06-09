@@ -1,0 +1,28 @@
+给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数
+
+方法1：位运算，将0-n进行位运算，在和数字进行异或运算，最终得到的是剩余的数字
+时间复杂度O(N),空间复杂度O(1)
+方法2:排序，由于只缺少某个数字，数组末尾添加-1代表确实数字，然后进行原址排序，将数字放到对应的序号位
+时间复杂度O(N),空间复杂度O(1)
+int missingNumber(vector<int>& nums) {
+	nums.push_back(-1);
+	int len = nums.size();
+	int val = len - 1;
+	int i = 0;
+	int temp;
+	while (i < len)
+	{
+		if (nums[i] == i || nums[i] == -1)
+		{
+			i++;
+			
+			continue; 
+		}
+		temp = nums[i];
+		nums[i] = nums[temp];
+		nums[temp] = temp;
+		if (nums[i] == -1)
+			val = i;
+	}
+	return val;
+}
