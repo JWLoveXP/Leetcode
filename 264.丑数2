@@ -1,0 +1,25 @@
+编写一个程序，找出第 n 个丑数。
+丑数就是质因数只包含 2, 3, 5 的正整数
+
+方法：动态规划，每个数字只能乘以一次2、3和5，设置三个指针two, three和five，分别表示乘2，3，5的指针，比较三个指针和对应数字的乘积，选择最小的作为
+数组下一个数字，同时该指针右移，因此三个指针始终指向乘2或3或5的数字
+注意：三个判断语句都必须判断一次，避免重复数字，比如指针3指向数字2，指针2指向数字3，乘积都为6，当当前结果为6时，两个指针都+1，从而能避免重复结果
+int nthUglyNumber(int n) {
+	vector<int>dp(n);
+	dp[0] = 1;
+	int two = 0;
+	int three = 0;
+	int five = 0;
+	for (int i = 1; i < n; i++)
+	{
+		dp[i] = min(dp[two] * 2, dp[three] * 3);
+		dp[i] = min(dp[i], dp[five] * 5);
+		if (dp[i] == dp[two] * 2)
+			two++;
+		if (dp[i] == dp[three] * 3)
+			three++;
+		if (dp[i] == dp[five] * 5)
+			five++;
+	}
+	return dp[n - 1];
+}
