@@ -1,0 +1,39 @@
+给定一位研究者论文被引用次数的数组（被引用次数是非负整数），数组已经按照升序排列。编写一个方法，计算出研究者的 h 指数。
+h 指数的定义: “h 代表“高引用次数”（high citations），一名科研人员的 h 指数是指他（她）的 （N 篇论文中）总共有 h 篇论文分别被引用了至少 h 次。
+（其余的 N - h 篇论文每篇被引用次数不多于 h 次。）"
+
+方法1：顺序遍历，count代表h，citations[i]代表引用次数，当citations[i]>=count时，表示找到目标h，小于时表示引用次数小于数量，则count--，i++
+时间复杂度O(N),空间复杂度O(1)
+int hIndex(vector<int>& citations) {
+	int len = citations.size();
+	int count = len;
+	for (int i = 0; i < len; i++)
+	{
+		if (citations[i] >= count)
+			return count;
+		count--;
+	}
+	return 0;
+
+}
+方法2：二分搜索，分成三种情况，1.citations[mid] == (len - mid)，引用次数等于数量，找到h
+时间复杂度O(logN),空间复杂度O(1)
+2.citations[mid] < (len - mid),引用次数小于数量,则left右移
+3.citations[mid] > (len - mid),right右移，寻找是否有更大的h
+int hIndex(vector<int>& citations) {
+	int left = 0;
+	int len = citations.size();
+	int right = len - 1;
+	int mid;
+	while (left <= right)
+	{
+		mid = (left + right) / 2;
+		if (citations[mid] == (len - mid))
+			return len - mid;
+		else if (citations[mid] < (len - mid))
+			left = mid + 1;
+		else 
+			right = mid - 1;
+	}
+	return len - left;
+}
