@@ -1,0 +1,23 @@
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序
+
+方法：双指针，slow指针指向第一个0元素，fast指针向后移，当fast遇到0时，交换slow和fast内容，slow++,在这里未使用交换函数，
+而是slow置为fast值，fast置为0，但是如果slow和fast相同时，会把值置为0，所以在slow和fast不同时进行置换。
+时间复杂度O(N),空间复杂度O(1)
+void moveZeroes(vector<int>& nums) {
+	int slow = 0;
+	int fast = 0;
+	int len = nums.size();
+	while (fast < len)
+	{
+		if (nums[fast] != 0)
+		{
+			if (slow != fast)
+			{
+				nums[slow] = nums[fast];
+				nums[fast] = 0;
+			}
+			slow++;
+		}
+		fast++;
+	}
+}
