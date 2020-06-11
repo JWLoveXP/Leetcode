@@ -1,0 +1,43 @@
+给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少
+
+方法1：回溯+剪支，遍历所有的可能
+void myFind(int n, int r, int& max)
+{
+	//剪支
+	if (n == 0)
+	{
+		if (r < max)
+			max = r;
+		return;
+	}
+	if (n > 0 && max <= r)
+		return;
+	int num = int(sqrt(n));
+	for (int i = num; i >= 1; i--)
+	{
+		myFind(n - i*i, r + 1, max);
+	}
+		
+}
+int numSquares(int n) {
+	int max = n;
+	myFind(n, 0, max);
+	return max;
+}
+方法2：动态规划，dp[i]代表用完全平方数得到数字i的最小个数
+举个例子，n = 12，那么小于它的完全平方数为1，4，9，假设先取9，那么则比较dp[i]和dp[12 - 9] + 1的大小，dp[3]已经计算出，
+然后再比较dp[12-4]和dp[12-1]同dp[i]的大小
+int numSquares(int n) {
+	vector<int>dp(n + 1, n);
+	dp[0] = 0;
+	dp[1] = 1;
+	int num;
+	int i, j;
+	for (i = 2; i <= n; i++)
+	{
+		num = sqrt(i);
+		for (j = num; j >= 1; j--)
+			dp[i] = min(dp[i], dp[i - j*j] + 1);
+	}
+	return dp[n];
+}
