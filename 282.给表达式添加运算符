@@ -1,0 +1,50 @@
+给定一个仅包含数字 0-9 的字符串和一个目标值，在数字之间添加二元运算符（不是一元）+、- 或 * ，返回所有能够得到目标值的表达式
+
+
+方法：回溯
+void findOperators(string& num, int pos, string& r, long  val, long  count, vector<string>&res, int target)
+{
+	int len = num.size();
+	if (pos == len)
+	{
+		if (count == target)
+			res.push_back(r);
+	}
+	long temp = 0;
+	int size = r.size();
+	for (int i = pos; i < len; i++)
+	{
+
+		string sVal = num.substr(pos, i - pos + 1);
+		temp = stol(sVal);
+		if (pos == 0) //第一个数，额外判断
+		{
+			r += sVal;
+			findOperators(num, i + 1, sVal, temp, count + temp, res, target);
+			r.resize(size);
+		}
+		else
+		{
+			//加号
+			r += '+' + sVal;
+			findOperators(num, i + 1, r, temp, count + temp, res, target);
+			r.resize(size);
+			//减号
+			r += '-' + sVal;
+			findOperators(num, i + 1, r, -temp, count - temp, res, target);
+			r.resize(size);
+			//乘号，乘法优先级高于+、-，所以遇到*时，先减去val(val代表上一个数字)，用乘法
+			r += '*' + sVal;
+			findOperators(num, i + 1, r, val*temp, count - val + val*temp, res, target);
+			r.resize(size);
+		}
+		if (temp == 0)//防止0开带头的多位数
+			return;
+	}
+}
+vector<string> addOperators(string num, int target) {
+	vector<string>res;
+	string s = "";
+	findOperators(num, 0, s, 1, 0, res, target);
+	return res;
+}
