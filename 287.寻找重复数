@@ -1,0 +1,53 @@
+给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数
+
+方法：二分法,第一次用来找范围
+count[i]代表小于等于i的数字的数量，目标值为target，那么对于1-target-1范围，count[i]<=i, 对于target-n，count[i]>i
+当只有两个重复数时，对于1-target-1范围，count[i]==i, 对于target-n，count[i]=i+1
+当有三个以上重复数时，假如替换的是在1-target-1范围，假设是pos，那么对于1-pos范围，count[i]==i, pos - target-1为count[i]>i,
+对于target-n，count[i]>i
+
+int findDuplicate(vector<int>& nums) {
+	int len = nums.size();
+	int left = 1;
+	int right = len - 1;
+	int mid, i, count;
+	while (left <= right)
+	{
+		mid = left + (right - left) / 2;
+		count = 0;
+		for (i = 0; i < len; i++)
+		{
+			if (mid >= nums[i])
+				count++;
+		}
+		if (mid >= count)
+			left = mid + 1;
+		else
+			right = mid - 1;
+	}
+	return left;
+
+}
+
+方法2：存在重复元素，那么会存在环，可以通过快慢指针在找到重复元素，重复元素必然是环的起点，慢指针每次走1步，快指针每次走两步，
+那么最终它们在环中的某个位置相遇，此时假设从数组到环起点距离为a，相遇点距离起点距离为b，而相遇点到达起点的距离为c，环的大小为L=b+c
+当相遇时，慢指针走了a+b的路径，而快指针走了2(a+b)的距离，假设快指针在环中走了k圈，那么有
+2(a+b) = a+kL+b  ==>   a+b = kL = (k-1)L + b + c  ==> a = (k-1)L + c,
+所以当快慢指针相遇时，使得慢指针从头开始，而快快指针每次走一步，那么最终会在起点相遇
+int findDuplicate(vector<int>& nums) {
+
+	int slow = nums[0];
+	int fast = nums[nums[0]];
+	while (slow != fast)
+	{
+		slow = nums[slow];
+		fast = nums[nums[fast]];
+	}
+	slow = 0;
+	while (slow != fast)
+	{
+		slow = nums[slow];
+		fast = nums[fast];
+	}
+	return slow;
+}
