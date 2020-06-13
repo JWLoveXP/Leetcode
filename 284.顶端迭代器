@@ -1,0 +1,60 @@
+给定一个迭代器类的接口，接口包含两个方法： next() 和 hasNext()
+设计并实现一个支持 peek() 操作的顶端迭代器 -- 其本质就是把原本应由 next() 方法返回的元素 peek() 出来
+
+
+方法：设置一个变量和标志，当标志为使用peek，如果标志为false，则调用next函数将值赋给变量，并将标志置为true,返回变量值；而调用next函数时，如果标志
+为true，说明前面调用了peek函数，此时将标志置为false，并返回变量值，否则调用next函数
+/*
+ * Below is the interface for Iterator, which is already defined for you.
+ * **DO NOT** modify the interface for Iterator.
+ *
+ *  class Iterator {
+ *		struct Data;
+ * 		Data* data;
+ *		Iterator(const vector<int>& nums);
+ * 		Iterator(const Iterator& iter);
+ *
+ * 		// Returns the next element in the iteration.
+ *		int next();
+ *
+ *		// Returns true if the iteration has more elements.
+ *		bool hasNext() const;
+ *	};
+ */
+
+class PeekingIterator : public Iterator {
+public:
+    int pre;
+    bool flag;
+	PeekingIterator(const vector<int>& nums) : Iterator(nums) {
+	    // Initialize any member here.
+	    // **DO NOT** save a copy of nums and manipulate it directly.
+	    // You should only use the Iterator interface methods.
+	    flag = false;
+	}
+	
+    // Returns the next element in the iteration without advancing the iterator.
+	int peek() {
+        if(!flag)
+        {
+            flag = true;
+            pre = Iterator::next();
+        }
+        return pre;
+	}
+	
+	// hasNext() and next() should behave the same as in the Iterator interface.
+	// Override them if needed.
+	int next() {
+	    if(flag)
+        {
+            flag = false;
+            return pre;
+        }
+        return Iterator::next();
+	}
+	
+	bool hasNext() const {
+	    return flag || Iterator::hasNext();
+	}
+};
