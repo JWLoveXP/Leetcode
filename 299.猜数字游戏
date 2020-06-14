@@ -1,0 +1,32 @@
+你正在和你的朋友玩 猜数字（Bulls and Cows）游戏：你写下一个数字让你的朋友猜。每次他猜测后，你给他一个提示，
+告诉他有多少位数字和确切位置都猜对了（称为“Bulls”, 公牛），有多少位数字猜对了但是位置不对（称为“Cows”, 奶牛）。
+你的朋友将会根据提示继续猜，直到猜出秘密数字。
+请写出一个根据秘密数字和朋友的猜测数返回提示的函数，用 A 表示公牛，用 B 表示奶牛。
+请注意秘密数字和朋友的猜测数都可能含有重复数字
+方法：哈希表
+时间复杂度O(N)，空间复杂度O()
+string getHint(string secret, string guess) {
+	int len = secret.size();
+	int A = 0;
+	int B = 0;
+	int i; 
+	unordered_map<char, int>dict;
+	for (i = 0; i < len; i++)
+	{
+		if (secret[i] == guess[i])//有数字且位置正确
+			A++;
+		else
+			dict[secret[i]]++;
+	}
+	for (i = 0; i < len; i++)
+	{
+		if (secret[i] == guess[i])//有数字且位置正确，跳过
+			continue;
+		else if (dict.count(guess[i]) && dict[guess[i]] > 0)//有这个数字但位置不正确，且计数不为0，因为有重复数字
+		{
+			B++;
+			dict[guess[i]]--;
+		}
+	}
+	return to_string(A) + "A" + to_string(B) + "B";
+}
