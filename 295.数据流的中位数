@@ -1,0 +1,154 @@
+中位数是有序列表中间的数。如果列表长度是偶数，中位数则是中间两个数的平均值。
+
+例如，
+
+[2,3,4] 的中位数是 3
+
+[2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+设计一个支持以下两种操作的数据结构：
+
+    void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+    double findMedian() - 返回目前所有元素的中位数
+
+方法1：插入排序，在已经一个有序的数组中插如一个数字，通过二分查找到插入位置
+时间复杂度O(N), 空间复杂度O(N)
+
+方法2：两个堆，一个存放左半部分为最大堆，右边存放右半部分，为最小堆，最大堆数量=最小堆数量或者最小堆数量+1
+时间复杂度O(logN)，空间复杂度O(N)
+自己建堆，时间较长，可用STL库中封装的优先队列
+void maxHeaplify(vector<int>& nums, int i, int len)
+{
+	int j = 2 * i + 1;
+	int temp = nums[i];
+	while (j < len)
+	{
+		if (j + 1 < len && nums[j + 1] > nums[j])
+			j++;
+		if (nums[j] > temp)
+		{
+			nums[i] = nums[j];
+			i = j;
+			j = 2 * i + 1;
+		}
+		else
+			break;
+	}
+	nums[i] = temp;
+}
+void maxHeap(vector<int>& nums)
+{
+	int len = nums.size();
+	for (int i = len/2-1; i >= 0; i--)
+		maxHeaplify(nums, i, len);
+}
+void minHeaplify(vector<int>& nums, int i, int len)
+{
+	int j = 2 * i + 1;
+	int temp = nums[i];
+	while (j < len)
+	{
+		if (j + 1 < len && nums[j + 1] < nums[j])
+			j++;
+		if (nums[j] < temp)
+		{
+			nums[i] = nums[j];
+			i = j;
+			j = 2 * i + 1;
+		}
+		else
+			break;
+	}
+	nums[i] = temp;
+}
+void minHeap(vector<int>& nums)
+{
+	int len = nums.size();
+	for (int i = len / 2 - 1; i >= 0; i--)
+		minHeaplify(nums, i, len);
+}
+class MedianFinder {
+public:
+	int count;
+	vector<int>left;//大顶堆
+	int leftcount;
+	vector<int>right;//小顶堆
+	int rightcount;
+	/** initialize your data structure here. */
+	MedianFinder() {
+		count = 0;
+		leftcount = 0;
+		rightcount = 0;
+	}
+
+	void addNum(int num) {
+		if (count %2 == 1)
+		{
+			rightcount++;
+			if (num < left[0])
+			{
+				right.push_back(left[0]);
+				left[0] = num;
+				maxHeap(left);
+			}
+			else
+				right.push_back(num);
+			if (right[rightcount - 1] < right[0])
+				swap(right[0], right[rightcount - 1]);
+		}
+		else
+		{
+			leftcount++;
+			if (count == 0)
+				left.push_back(num);
+			else
+			{
+				if (num > right[0])
+				{
+					left.push_back(right[0]);
+					right[0] = num;
+					minHeap(right);
+				}
+				else
+					left.push_back(num);
+				if (left[leftcount - 1] > left[0])
+					swap(left[0], left[leftcount - 1]);
+			}
+		}
+		count++;
+	}
+
+	double findMedian() {
+		if (count % 2 == 0)
+			return double(left[0] + right[0]) / 2;
+		else
+			return left[0];
+	}
+};
+
+使用封装函数
+#include<queue>//优先队列的头文件
+#include<functional>//greater函数的头文件
+class MedianFinder {
+public:
+	priority_queue<int>max;//左边最大堆
+	priority_queue<int, vector<int>, greater<int>>min;//右边最小堆
+	/** initialize your data structure here. */
+	MedianFinder() {
+	}
+
+	void addNum(int num) {
+		max.push(num);//先加入做半边
+		min.push(max.top())；//在讲堆顶加入右半边，平衡
+		max.pop();
+		if (max.size() < min.size())//如果最大堆数量小于最小堆，则把最小堆堆顶加到最大堆
+		{
+			max.push(min.top());
+			min.pop();
+		}
+	}
+
+	double findMedian() {
+		return max.size() == min.size() ? double(max.top() + min.top()) / 2 : max.top();
+	}
+};
