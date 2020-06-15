@@ -1,0 +1,44 @@
+给定一个整数数组  nums，求出数组从索引 i 到 j  (i ≤ j) 范围内元素的总和，包含 i,  j 两点
+
+方法1：缓存，把所有的可能记录
+时间复杂度O(N^2),空间复杂度O(N^2)，会超时
+class NumArray {
+public:
+	vector<vector<int>>dp;
+	NumArray(vector<int>& nums) {
+		int len = nums.size();
+		dp.resize(len, vector<int>(len));
+		int i, j;
+		for (i = 0; i < len; i++)
+			dp[i][i] = nums[i];
+		for (i = 1; i < len; i++)
+		{
+			for (j = 0; j < len - i; j++)
+			{
+				dp[j][j + i] = dp[j][j + i - 1] + nums[j + i];
+			}
+		}
+	}
+
+	int sumRange(int i, int j) {
+		return dp[i][j];
+	}
+};
+方法1：优化缓存，计算到每个元素的和，需计算(i,j)时，利用sum[j]-sum[i-1]即可
+时间复杂度O(N),空间复杂度O(N)
+class NumArray {
+public:
+	vector<int>dp;
+	NumArray(vector<int>& nums) {
+		int len = nums.size();
+		dp.resize(len + 1, 0);
+		int i;
+		for (i = 1; i <= len; i++)
+			dp[i] = dp[i - 1] + nums[i - 1];
+
+	}
+
+	int sumRange(int i, int j) {
+		return dp[j+1] - dp[i];
+	}
+};
