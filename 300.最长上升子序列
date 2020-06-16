@@ -1,0 +1,83 @@
+给定一个无序的整数数组，找到其中最长上升子序列的长度
+
+方法1：动态规划，dp[i]代表以第i个元素结尾的最大长度，转移方程为dp[i] = max(dp[j]) + 1,j<i
+时间复杂度O(N^2)，空间复杂度O(N)
+int lengthOfLIS(vector<int>& nums) {
+	int len = nums.size();
+	if (len == 0)
+		return 0;
+	vector<int>dp(len, 1);
+	int maxval = 1;
+	int i, j;
+	for (i = 0; i < len; i++)
+	{
+		for (j = i - 1; j >= 0; j--)
+		{
+			if (nums[i] > nums[j] && dp[i] <= dp[j])
+				dp[i] = dp[j] + 1;
+		}
+		maxval = max(maxval, dp[i]);
+	}
+	return maxval;
+}
+
+方法2：单调栈，维护一个单调栈，注意判断当前元素大于之前最大长度时元素值的情况
+最坏时间复杂度(N^2),空间复杂度O(N)
+int lengthOfLIS1(vector<int>& nums) {
+	int len = nums.size();
+	if (len == 0)
+		return 0;
+	int maxval = 1;
+	int val = nums[0];
+	int i;
+	stack<int>st;
+	st.push(nums[0]);
+	for (i = 1; i < len; i++)
+	{
+	
+		while (!st.empty() && nums[i] <= st.top())
+			st.pop();
+
+		st.push(nums[i]);
+		if (maxval < int(st.size()))
+		{
+			maxval = int(st.size());
+			val = nums[i];
+		}
+		if (nums[i] > val)
+		{
+			maxval++;
+			val = nums[i];
+		}
+	}
+	return maxval;
+}
+
+方法三：贪心+二分搜索，dp[i]代表长度为i时结尾元素的最小值，
+如果dp[count] < nums[i]，那么直接将nums[i]加到dp中
+否则找到比nums[i]大最小的值替换
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int len = 1, n = (int)nums.size();
+        if (n == 0) return 0;
+        vector<int> d(n + 1, 0);
+        d[len] = nums[0];
+        for (int i = 1; i < n; ++i) {
+            if (nums[i] > d[len]) d[++len] = nums[i];
+            else{
+                int l = 1, r = len, pos = 0; // 如果找不到说明所有的数都比 nums[i] 大，此时要更新 d[1]，所以这里将 pos 设为 0
+                while (l <= r) {
+                    int mid = (l + r) >> 1;
+                    if (d[mid] < nums[i]) {
+                        pos = mid;
+                        l = mid + 1;
+                    }
+                    else r = mid - 1;
+                }
+                d[pos + 1] = nums[i];
+            }
+        }
+        return len;
+    }
+};
