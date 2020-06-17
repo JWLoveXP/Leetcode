@@ -1,0 +1,138 @@
+删除最小数量的无效括号，使得输入的字符串有效，返回所有可能的结果
+说明: 输入可能包含了除 ( 和 ) 以外的字符
+输入: "(a)())()"
+输出: ["(a)()()", "(a())()"]
+
+方法：dfs回溯
+设置两个计数器leftcount和rightcount，记录左括号和右括号数量，以及删除计数器removecount和最小删除计数器mincount
+1.当s[index]不是'('和')'，则把该字符添加到字符串中
+2.是'('和')'时，第一种情况是直接删除，判断下一个字符
+3.当s[index]=='(',左括号出现不匹配的情况是leftcount>rightcount，但是得在最后才能判断，所以判断下一个字符
+3.当s[index]=='）',右括号出现不匹配的情况是leftcount<rightcount，此时多右括号，必然不匹配，所有遇到')',判断leftcount>rightcount是否成立
+成立则判断下一个字符
+4.运行到最后一个字符之后，判断leftcount == rightcount，如果时，则继续判断
+5.剪支，removecount > mincount时，剪支
+
+时间复杂度O(2^N),空间复杂度O()
+void resurse(string& s, unordered_set<string>&myset, int leftcount, int rightcount, string& r, int index, int removecount, int& mincount)
+{
+	if (removecount > mincount)
+		return;
+	if (index == s.size())
+	{
+		if (leftcount == rightcount)
+		{
+			if (removecount < mincount)
+			{
+				myset.clear();
+				mincount = removecount;
+			}
+			myset.insert(r);
+		}
+	}
+	else
+	{
+		if (s[index] != '(' && s[index] != ')')
+		{
+			r += s[index];
+			resurse(s, myset, leftcount, rightcount, r, index + 1, removecount, mincount);
+			r.pop_back();
+		}
+		else
+		{
+			//删除
+			resurse(s, myset, leftcount, rightcount, r, index + 1, removecount + 1, mincount);
+			//不删除
+			r += s[index];
+			if (s[index] == '(')
+				resurse(s, myset, leftcount + 1, rightcount, r, index + 1, removecount, mincount);
+			else if (rightcount < leftcount)
+				resurse(s, myset, leftcount, rightcount + 1, r, index + 1, removecount, mincount);
+			r.pop_back();
+		}
+	}
+}
+vector<string> removeInvalidParentheses(string s) {
+	unordered_set<string>myset;
+	vector<string>res;
+	string r = "";
+	int mincount = s.size();
+	resurse(s, myset, 0, 0, r, 0, 0, mincount);
+	for (auto i : myset)
+		res.push_back(i);
+	return res;
+}
+
+
+方法3：有限回溯
+如果提前知道回溯的次数，那么算法速度会更快
+1.计算出左括号删除的次数和右括号删除的次数，计数器left和right，遇到'('，left++,遇到')'，如果left>0,则left--,否则说明左边无匹配左括号，right++
+2.删除数量就是left+right，使用bfs，记录左右括号数量，使用上一个方法，得到优化算法
+void resurse(string& s, unordered_set<string>&myset, int left, int right, int leftcount, int rightcount, string& r, int index)
+{
+	if (index == s.size())
+	{
+		if (leftcount == 0 && rightcount == 0 && left == right)
+			myset.insert(r);
+	}
+	else
+	{
+		if (s[index] != '(' && s[index] != ')')
+		{
+			r += s[index];
+			resurse(s, myset, left, right, leftcount, rightcount, r, index + 1);
+			r.pop_back();
+		}
+		else
+		{
+			//删除
+			if (s[index] == '(' && leftcount>0)
+				resurse(s, myset, left, right, leftcount - 1, rightcount, r, index + 1);
+			else if (s[index] == ')' && rightcount>0)
+				resurse(s, myset, left, right, leftcount, rightcount - 1, r, index + 1);
+			//不删除
+			r += s[index];
+			if (s[index] == '(')
+				resurse(s, myset, left + 1, right, leftcount, rightcount, r, index + 1);
+			else if (right < left)
+				resurse(s, myset, left, right + 1, leftcount, rightcount, r, index + 1);
+			r.pop_back();
+		}
+	}
+}
+vector<string> removeInvalidParentheses(string s) {
+	int left=0, right=0;
+	for (char c : s)
+	{
+		if (c != '('&&c != ')')
+			continue;
+		else if (c == '(')
+			left++;
+		else
+		{
+			if (left > 0)
+				left--;
+			else
+				right++;
+		}
+	}
+	unordered_set<string>myset;
+	vector<string>res;
+	string r = "";
+	resurse(s, myset, 0 , 0, left, right, r, 0);
+	for (auto i : myset)
+		res.push_back(i);
+	return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
