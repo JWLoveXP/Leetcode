@@ -1,0 +1,36 @@
+编写一段程序来查找第 n 个超级丑数。
+超级丑数是指其所有质因数都是长度为 k 的质数列表 primes 中的正整数
+
+方法：动态规划
+res存放丑数序列，index数组代表各指针指向的当前数字，遍历指针数组，找到指针指向的值和对应质数的乘积最小值，然后加到丑数序列，
+并把乘积为最小值的指针后移一个值
+时间复杂度O(N)，空间复杂度O(N）
+int nthSuperUglyNumber(int n, vector<int>& primes) {
+
+	vector<int>res;
+	res.push_back(1);
+
+	int len = primes.size();
+	vector<int>indexs(len, 0);
+	int count = 1;
+	int i, min;
+	while (count < n)
+	{
+		min = res[indexs[0]] * primes[0];
+		for (i = 1; i < len; i++)
+		{
+			if (res[indexs[i]] * primes[i] < min)
+				min = res[indexs[i]] * primes[i];
+
+		}
+		for (i = 0; i < len; i++)
+		{
+			if (res[indexs[i]] * primes[i] == min)
+				indexs[i]++;
+		}
+		res.push_back(min);
+		count++;
+	}
+	return res[n - 1];
+
+}
