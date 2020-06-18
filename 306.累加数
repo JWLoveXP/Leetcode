@@ -29,3 +29,72 @@
             return false;
         return dfs(num,index3,len3,num3,index3+len3,sSum.size(),sum,len);
     }
+    
+ 方法2：线段树，线段树是一种非常灵活的数据结构，它可以用于解决多种范围查询问题，比如在对数时间内从数组中找到最小值、
+ 最大值、总和、最大公约数、最小公倍数等
+ 可以通过数组来构建线段树，数组大小为2*len，tree[0]为哨兵节点，每个节点代表一个范围的和，假设为[i,j]，
+ 那么左右节点分别包含[i, (i+j)/2）和[(i+j)/2, j]，所以除了叶子节点之外，其余节点为左右节点之和，即tree[i] = tree[2 * i] + tree[2 * i + 1]
+ 而tree[n:2n-1]范围为数组值，即叶子节点
+ 需要更新时，从下至上更新
+ 求取范围值时，i代表左节点，应该始终为偶数，j代表右节点，应该始终为奇数，因此当i为奇数时，将i右移加一，同时把值加到sum中，当j为偶数时，
+ 将j左移减一，同时把值加到sum中，然后当i>j时返回
+ class NumArray {
+public:
+	vector<int>tree;
+	int len;
+	NumArray(vector<int>& nums) {
+
+		len = nums.size();
+		tree.resize(len*2, 0);
+		if (nums.empty())
+			return;
+		int i, j;
+		for (i = len, j = 0; i < 2*len; i++, j++)
+			tree[i] = nums[j];
+		for (i = len - 1; i > 0; i--)
+			tree[i] = tree[2 * i] + tree[2 * i + 1];
+
+
+	}
+
+	void update(int i, int val) {
+		//自下向上更新
+		int pos = i + len;
+		tree[pos] = val;
+		int left, right;
+		while (pos > 0)
+		{
+			left = pos;
+			right = pos;
+            //判断节点位置
+			if (pos % 2 == 0)
+				right++; 
+			else left--;
+			tree[pos / 2] = tree[left] + tree[right];
+			pos /= 2;
+		}
+	}
+
+	int sumRange(int i, int j) {
+		i += len;
+		j += len; 
+		int sum = 0;
+		while (i <= j)
+		{
+			if (i % 2 == 1)
+			{
+				sum += tree[i];
+				i++;
+			}
+			if (j % 2 == 0)
+			{
+				sum += tree[j];
+				j--;
+			}
+			i /= 2;
+			j /= 2;
+		}
+		return sum; 
+		
+	}
+};
