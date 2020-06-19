@@ -1,0 +1,61 @@
+对于一个具有树特征的无向图，我们可选择任何一个节点作为根。图因此可以成为树，在所有可能的树中
+具有最小高度的树被称为最小高度树。给出这样的一个图，写出一个函数找到所有的最小高度树并返回他们的根节点
+
+
+方法1:通过bfs遍历，假设每个节点为根节点，选择高度最小的根节点，超时
+
+方法2：对于给定节点的树，如果叶子节点越多，那么高度会越小，所以从入度出发，从下往上缩小树
+首先将度为1的节点加入队列，出队列时，将上一层的节点的度减1，当该节点的度也为1时，说明该节点也变成了叶子节点，将该节点加入队列
+该方法是从最底层的叶子节点向上遍历
+当节点只剩下2个一下时，说明找到了根节点，因为最多两个最小高度树的根节点。
+vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+	int len = edges.size();
+	if (n == 1)
+		return vector<int>{0};
+	vector<vector<int>>relationship(n);
+	vector<int>indegree(n, 0);
+	int i, j, k;
+	for (i = 0; i < len; i++)
+	{
+		relationship[edges[i][0]].push_back(edges[i][1]);
+		relationship[edges[i][1]].push_back(edges[i][0]);
+		indegree[edges[i][0]]++;
+		indegree[edges[i][1]]++;
+	}
+	vector<int>res;
+	queue<int>q;
+	int temp;
+	for (i = 0; i < n; i++)
+	{
+		if (indegree[i] == 1)//叶子节点
+			q.push(i);
+	}
+	while (n > 2)
+	{
+		len = q.size();
+		n -= len;
+		for (j = 0; j < len; j++)
+		{
+			temp = q.front();
+			q.pop();
+			
+			indegree[temp] = 0;
+			for (k = 0; k < relationship[temp].size(); k++)
+			{
+				if (indegree[relationship[temp][k]] != 0)
+				{
+					indegree[relationship[temp][k]]--;
+					if (indegree[relationship[temp][k]] == 1)
+						q.push(relationship[temp][k]);
+				}
+			}
+
+		}
+	}
+	while (!q.empty())
+	{
+		res.push_back(q.front());
+		q.pop();
+	}
+	return res;
+}
