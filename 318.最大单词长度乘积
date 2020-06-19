@@ -1,0 +1,35 @@
+给定一个字符串数组 words，找到 length(word[i]) * length(word[j]) 的最大值，
+并且这两个单词不含有公共字母。你可以认为每个单词只包含小写字母。如果不存在这样的两个单词，返回 0
+
+
+方法：通过judge函数来判断两个字符串是否有相同的字符，由于只有小写字母，因此可以使用一个固定长度为26的数组来判断两个字符串是否有重复数字，而更好的方法
+是使用位运算，一个整型为32位，则遇到字符'a'，即第1位，b为第2位，往后类推
+而每个单词都要计算，所以最后的时间复杂度为O(N^2+L)，L为所有字符的长度，空间复杂度为O(N)
+更进一步优化：优化单词，单词中会有重复的单词，可以使用哈希表去掉
+bool judge(string& s1, string& s2)
+{
+	int bit1 = 0;
+	for (char c : s1)
+		bit1 |= 1 << (c - 'a');
+	int bit2 = 0;
+	for (char c : s2)
+		bit2 |= 1 << (c - 'a');
+	int a = bit1&bit2;
+	return (a == 0);
+}
+int maxProduct(vector<string>& words) {
+	int len = words.size();
+	if (len < 2)
+		return 0;
+	int val = 0;
+	int i, j;
+	for (i = 0; i < len; i++)
+	{
+		for (j = i + 1; j < len; j++)
+		{
+			if (judge(words[i], words[j]))
+				val = max(val, int(words[i].size()*words[j].size()));
+		}
+	}
+	return val;
+}
