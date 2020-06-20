@@ -1,0 +1,49 @@
+初始时有 n 个灯泡关闭。 第 1 轮，你打开所有的灯泡。 第 2 轮，每两个灯泡你关闭一次。 第 3 轮，每三个灯泡切换一次开关（如果关闭则开启，如果开启则关闭)
+第 i 轮，每 i 个灯泡切换一次开关。 对于第 n 轮，你只切换最后一个灯泡的开关。 找出 n 轮后有多少个亮着的灯泡
+
+
+方法1：可以发现对于第i个元素，它有多少个公约数(除1外)，就会切换多少次，那么最朴素的思想是计算每个数字的切换次数,并决定其最终状态
+时间复杂度O(N^2),空间复杂度O(1)，最终会超时
+int judge(int n)
+{
+	int end = n / 2;
+	int count = 1;
+	for (int i = 2; i <= end; i++)
+	{
+		if (n%i == 0)
+			count++;
+	}
+	return count;
+}
+int bulbSwitch(int n) {
+	if (n < 1)
+		return 0;
+	int val = 1;
+	for (int i = 2; i <= n; i++)
+	{
+		if (judge(i) % 2 == 0)
+			val++;
+	}
+	return val;
+}
+
+方法2：通过找规律可以发现，只在平方数的开关为开，所以只需要找平方数的个数即可
+时间复杂O(1)，空间复杂度O(1)
+int bulbSwitch(int n) {
+	if (n < 1)
+		return 0;
+	int res = 0;
+	int num = 1;
+	int val = 1;
+	while (val <= n)
+	{
+		num++;
+		res++;
+		val = num*num;
+	}
+	return res;
+}
+更简单的方式是返回平方根的整数部分
+int bulbSwitch(int n) {
+	return int(sqrt(n));
+}
