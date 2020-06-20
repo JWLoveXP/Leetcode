@@ -1,0 +1,26 @@
+给定一个无序的数组 nums，将它重新排列成 nums[0] < nums[1] > nums[2] < nums[3]... 的顺序
+
+方法1：排序+反序插入
+把数组排序，然后分成左右两部分(偶数时大小相等，奇数时左数组比右数组大1)，然后如果左右数组各出一个插入组成新的数组，如果遇到有多个重复数字的情况，可能会
+出错如[1,2,2,3]==>[1, 2],[2, 3] ==> [1, 2,2,3]，如果使用反序[2,1],[3,2]==>[3,2,1,2]则可以得到正确答案
+时间复杂度O(NlogN)，空间复杂度O(N)
+void wiggleSort(vector<int>& nums) {
+	int len = nums.size();
+	vector<int> res(nums.begin(), nums.end());
+	sort(res.begin(), res.end());
+	int left = len % 2 == 0 ? (len / 2 - 1) : (len / 2);
+	int right = len - 1;
+	int end = left + 1;
+	int i = 0;
+	while (left >= 0 && right >= end)
+	{
+		nums[i++] = res[left--];
+		nums[i++] = res[right--];
+	}
+	if (left == 0)
+		nums[i] = res[left];
+}
+
+方法2：快速选择+反序插入
+从上一个方法可以知道左右数组中的数据左数组始终小于等于右数组，那么只要找出中位数，并将数组分成两部分即可。可以使用快速选择来实现
+时间复杂度O(N)，空间复杂度O(N)
