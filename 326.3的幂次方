@@ -1,0 +1,21 @@
+给定一个整数，写一个函数来判断它是否是 3 的幂次方
+方法1：不断%3和/3，如果最终结果为1，则是true
+时间复杂度O(log3(N)),空间复杂度O(1)
+bool isPowerOfThree(int n) {
+	if (n <= 0)
+		return false;
+	while (n != 1)
+	{
+		if (n % 3 != 0)
+			return false;
+		n /= 3;
+	}
+	return true;
+}
+方法2：换底公式，计算log3（n），但是C++中直接没有，所以可以用log10(n) / log10(3)实现，最后判断是否有小数位
+bool isPowerOfThree(int n) {
+     if (n <= 0)
+	   return false;
+     double res = log10(n) / log10(3);
+     return res - (int)res == 0?true:false;
+}
