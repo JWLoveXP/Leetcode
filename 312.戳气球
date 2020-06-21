@@ -4,8 +4,8 @@
 求所能获得硬币的最大数量
 
 方法：动态规划，dp[i][j]表示第i+1个气球和第j-1个气球之间的最大值(即开区间)，那么从i到j选择一个值k，那么数值为dp[i][k] + dp[k][j] + points[i] * points[j] * points[k]，
-因此，选择一个k使得dp[i][j]值最大。
-
+因此，选择一个k使得dp[i][j]值最大
+时间复杂度O(N^3)，空间复杂度O(N^2)
 int maxCoins(vector<int>& nums) {
 	int len = nums.size();
 	vector<int>points(len + 2, 1); 
