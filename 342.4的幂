@@ -1,0 +1,8 @@
+给定一个整数 (32 位有符号整数)，请编写一个函数来判断它是否是 4 的幂次方
+方法：换幂公式，还可使用循环
+bool isPowerOfFour(int num) {
+	if (num <= 0)
+		return false;
+    int val = log10(num) / log10(4);
+	return pow(4, val) == num;
+}
