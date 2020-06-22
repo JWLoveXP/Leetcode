@@ -1,0 +1,63 @@
+给定一个整数数组 nums，按要求返回一个新数组 counts。数组 counts 有该性质： counts[i] 的值是  nums[i] 右侧小于 nums[i] 的元素的数量
+
+方法：归并排序，使用一个索引数组，记录当前元素的的索引，在归并排序中，分成左右两边，左边数组在右边数组之前，当左边元素加入排序队列时，计算右边元素已经
+有几个加入队列从而可知右边有多少元素小于当前元素，而当右边元素加入队列时，只记录其序号，因为上一此递归已经记录。
+class Solution
+{
+    vector<int> index;
+    vector<int> count;
+    vector<int> helper;
+
+public:
+    void merge(const vector<int> &nums, int lo, int mi, int hi)
+    {
+        if (lo == mi) return;
+        if (mi == hi) return;
+        
+        // 先merge两个小的
+        merge(nums, lo, (lo + mi) >> 1, mi);
+        merge(nums, mi, (mi + hi) >> 1, hi);
+        
+        // 把需要用的index拷贝到helper里面，一会儿直接往index里面写就好了
+        for (int k = lo; k < hi; k++) helper[k] = index[k];
+        
+        // 合并两个有序数组，并计算向右移动的位数(即右边有几个比当前元素小)
+        int p1 = lo, p2 = mi, p = lo;
+        while (p1 != mi or p2 != hi) {
+            if (p1 == mi) {
+                index[p++] = helper[p2++];
+                
+            } else if (p2 == hi) {
+                index[p++] = helper[p1++];
+                count[index[p - 1]] += (p2 - mi);  // p2 - mi即右边出了多少个
+                
+            } else if (nums[helper[p2]] < nums[helper[p1]]) {
+                index[p++] = helper[p2++];
+                
+            } else {
+                index[p++] = helper[p1++];
+                count[index[p - 1]] += (p2 - mi);  // p2 - mi即右边出了多少个
+            }
+        }
+    }
+
+    vector<int> countSmaller(vector<int> &nums)
+    {
+        if (nums.size() == 0)
+            return {};
+        if (nums.size() == 1)
+            return {0};
+
+        index.resize(nums.size());
+        count.resize(nums.size());
+        helper.resize(nums.size());
+        
+        for (int i = 0; i < nums.size(); i++) {
+            index[i] = i;
+            count[i] = 0;
+        }
+
+        merge(nums, 0, nums.size() / 2, nums.size());
+        return count;
+    }
+};
