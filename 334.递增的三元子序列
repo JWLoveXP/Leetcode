@@ -1,0 +1,28 @@
+给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。
+
+数学表达式如下:
+
+    如果存在这样的 i, j, k,  且满足 0 ≤ i < j < k ≤ n-1，
+    使得 arr[i] < arr[j] < arr[k] ，返回 true ; 否则返回 false 。
+
+说明: 要求算法的时间复杂度为 O(n)，空间复杂度为 O(1) 
+
+方法：设置两个值first和second，当当前值小于first时，更新first，否则当小于second时，更新second，如果大于second，则为正确
+first和second代表第一、第二小的值，当遇到小于first时，更新了first，此时second序号小于first，但是，此时隐含的条件是前面有一个值介于first和second之间，
+因此此时出现大于second的值时，还是正确，不影响。
+bool increasingTriplet(vector<int>& nums) {
+	int len = nums.size();
+	if (len <= 2)
+		return false;
+	int first = INT_MAX, second = INT_MAX;
+	for (auto num : nums)
+	{
+		if (num <= first)
+			first = num;
+		else if (num <= second)
+			second = num;
+		else
+			return true;
+	}
+	return false;
+}
