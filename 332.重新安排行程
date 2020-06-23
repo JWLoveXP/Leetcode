@@ -1,0 +1,51 @@
+给定一个机票的字符串二维数组 [from, to]，子数组中的两个成员分别表示飞机出发和降落的机场地点，对该行程进行重新规划排序。所有这些机票都属于一个从JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK 出发。
+
+说明:
+
+    如果存在多种有效的行程，你可以按字符自然排序返回最小的行程组合。例如，行程 ["JFK", "LGA"] 与 ["JFK", "LGB"] 相比就更小，排序更靠前
+    所有的机场都用三个大写字母表示（机场代码）。
+    假定所有机票至少存在一种合理的行程。
+    
+方法：排序+DFS，得到字典后，通过排序，则第一条找到的路径就是目标路径，也可通过将字典改成unordered_map<string, set<string>>，set会自动自小向大排序
+通过DFS回溯遍历，使用#带代替访问过的字符，防止重复访问。flag表示标志，当falg为1时表示已经找到目标，返回
+#include<unordered_map>
+void findPath(unordered_map<string, vector<string>>&dict, vector<string>&res, int& flag, int count, string s)
+{
+	if (res.size() == count)
+	{
+		flag = 1;
+		return;
+	}
+	string temp;
+	for (int i = 0; i < dict[s].size();i++)
+	{
+		if (dict[s][i] != "#")
+		{
+			temp = dict[s][i];
+			dict[s][i] = "#";
+			res.push_back(temp);
+			findPath(dict, res, flag, count, temp);
+			if (flag == 1)
+				return;
+			res.pop_back();
+			dict[s][i] = temp;
+		}
+	}
+}
+vector<string> findItinerary(vector<vector<string>>& tickets) {
+	unordered_map<string, vector<string>>dict;
+	int count = 1;
+	for (auto r : tickets)
+	{
+		dict[r[0]].push_back(r[1]);
+		count++;
+	}
+		
+	for (auto i = dict.begin(); i != dict.end();i++)
+		sort(i->second.begin(), i->second.end());
+	vector<string>res;
+	res.push_back("JFK");
+	int flag = 0;
+	findPath(dict, res, flag, count, "JFK");
+	return res;
+}
