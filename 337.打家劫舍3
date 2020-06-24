@@ -1,0 +1,41 @@
+在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。
+一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。
+计算在不触动警报的情况下，小偷一晚能够盗取的最高金额
+
+方法：动态规划，从题目可知，相邻屋子不能偷，对于一个节点，只有两种情况，偷根节点+偷四个孩子得到的最大钱数和偷两个孩子的最大钱数，这里的最大钱数是指以某个节点开始的能偷到的最大钱数，当前节点不一定
+偷，因为是个递归的问题
+由于会多次重复的计算子问题，所以时间复杂度比较高
+int rob(TreeNode* root) {
+	if (!root)
+		return 0;
+
+	int money = root->val;
+	if (root->left)
+		money += rob(root->left->left) + rob(root->left->right);
+	if (root->right)
+		money += rob(root->right->left) + rob(root->right->right);
+	return max(money, rob(root->left) + rob(root->right));
+}
+
+方法2：记忆化搜索+动态规划，记录每个节点能偷到的最大钱数，由于是树结构，不适合用数组，这里使用哈希表，key为节点，当遇到已经计算过的节点，直接返回值
+相比于前一种方法，这种方法避免了重复计算，时间减少，但是会有更大的空间复杂度
+
+方法3：最优化动态规划
+对于每个节点，有偷和不偷两个状态，记为res[0]和res[1]
+对于不偷的状态，从孩子节点中选择最大值，res[0] = max(res_left[0], res_left[1]) +  max(res_right[0], res_right[1])
+对于偷的状态，那么孩子只能选择不偷 res[1] = res_left[1] +  res_right[1] + val
+该方法中，不在需要哈希表，并且使用结构体pair比数组vector速度来的快
+pair<int, int> dfs(TreeNode *root)
+{
+	if (root == nullptr) return{ 0, 0 };
+	auto left_pair = dfs(root->left);
+	auto right_pair = dfs(root->right);
+	pair<int, int>res;
+	res.first = max(left_pair.first, left_pair.second) + max(right_pair.first, right_pair.second);//不偷
+	res.second = root->val + left_pair.second + right_pair.second;//偷
+	return res;
+}
+int rob(TreeNode* root) {
+	auto p = dfs(root);
+	return max(p.first, p.second);
+}
