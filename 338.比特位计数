@@ -1,0 +1,25 @@
+给定一个非负整数 num。对于 0 ≤ i ≤ num 范围中的每个数字 i ，计算其二进制数中的 1 的数目并将它们作为数组返回
+
+方法:动态规划+去掉最后一个1，对于x,之前已经计算了0~x-1，那么利用x&x-1可以去掉x中的最后一个1，而x&x-1的结果也落在了0~x-1中，所以转移方程为
+dp[i] = dp[i&i-1]+1
+时间复杂度O(N),空间复杂度O(N)，用于存放结果
+
+vector<int> countBits(int num) {
+	vector<int>dp(num + 1, 0);
+	for (int i = 1; i <= num; i++)
+	{
+		dp[i] = dp[i & i - 1] + 1;
+	}
+	return dp;
+}
+
+方法2：动态规划+最低有效位
+对于数x和x/2，x/2 = x>>1，所以dp[i] = dp[i / 2] + x % 2，如果最后以为是奇数，那么第0位是1，所以需要加1，而是偶数，则第0位是0，不用加1
+vector<int> countBits(int num) {
+	vector<int>dp(num + 1, 0);
+	for (int i = 1; i <= num; i++)
+	{
+		dp[i] = dp[i>>2] + x % 2;
+	}
+	return dp;
+}
