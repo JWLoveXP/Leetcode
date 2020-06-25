@@ -1,0 +1,61 @@
+给定长度分别为 m 和 n 的两个数组，其元素由 0-9 构成，表示两个自然数各位上的数字。现在从这两个数组中选出 k (k <= m + n) 个数字拼接成一个新的数，
+要求从同一个数组中取出的数字保持其在原数组中的相对顺序。
+求满足该条件的最大数。结果返回一个表示该最大数的长度为 k 的数组。
+说明: 请尽可能地优化你算法的时间和空间复杂度
+
+
+方法：该题是从两个数组中选出k个数作为一个最后结果，那么必然有从第一个数组取出a个数，从第二个数组取出b个数，从而变成从第1个数组保持其在原数组中的相对顺序取出最大的a个数，
+然后从第1个数组保持其在原数组中的相对顺序取出最大的b个数
+
+那么怎么从第1个数组保持其在原数组中的相对顺序取出最大的n个数呢？
+
+1.回溯,时间复杂度太高，咋办？
+2.对于每个数字，有两种可能，保留或者丢弃，那么什么时候保留，什么时候丢弃呢。已有数字123，此时来了数字4，如果当前还需去掉k个数(k>0)，说明当前还能去掉，那么4开头的话数字更大，所以把前面123全部去掉
+，实质上就是在能去掉时，维护一个单调栈，只有一种例外情况，那就是是个单调减少的数组，此时就取前n-k个
+
+解决了一个数组的去掉k个数，那么现在有两个数组需要合并，该如何是好呢？
+利用归并排序中的合并，但是不能完全按照那种方式，不然在遇到有相同数字时会产生错误，利用STL中的函数lexicographical_compare比较，也就是每个字符按字典顺序比较，大的先进入
+
+时间复杂度：取值时间复杂度为O(N)和O(M),合并是O(M+N),最终的时间复杂度O(K(M+N))
+
+class Solution {
+public:
+	vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+		vector<int> res(k, 0);
+		int n = nums1.size(), m = nums2.size();
+		// 假设有最大子序列中有s个元素来自nums1，对所有可能的s值遍历
+		for (int s = max(0, k - m); s <= min(k, n); s++){
+			vector<int> temp;
+			int i = 0, j = 0;
+			// nums1中长度为s的最大子序列
+			vector<int> temp1 = maxKsequence(nums1, s);
+			// nums2中长度为k-s的最大子序列
+			vector<int> temp2 = maxKsequence(nums2, k - s);
+			// 对两个子序列进行归并
+			// lexicographical_compare：比较两个序列的字典序大小
+			auto iter1 = temp1.begin(), iter2 = temp2.begin();
+			while (iter1 != temp1.end() || iter2 != temp2.end()){
+				temp.push_back(lexicographical_compare(iter1, temp1.end(), iter2, temp2.end()) ? *iter2++ : *iter1++);
+			}
+			// 如果归并后的最大子序列大于目前已找到的最大子序列，则更新解
+			res = lexicographical_compare(res.begin(), res.end(), temp.begin(), temp.end()) ? temp : res;
+		}
+		return res;
+	}
+
+	// 求数组v的长度为k的最大子序列
+	vector<int> maxKsequence(vector<int> v, int k){
+		int n = v.size();
+		if (n <= k)
+			return v;
+		vector<int> res;
+		int pop = n - k;
+		for (int i = 0; i<n; i++){
+			while (!res.empty() && v[i]>res.back() && pop-->0)
+				res.pop_back();
+			res.push_back(v[i]);
+		}
+		res.resize(k);
+		return res;
+	}
+};
