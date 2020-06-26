@@ -1,0 +1,23 @@
+编写一个函数，以字符串作为输入，反转该字符串中的元音字母
+
+方法：双指针，left指针从前往后，right指针从后往前，当两个都指向元音字母时，交换，如果其中有一个不是，从则移到下一个元素
+string reverseVowels(string s) {
+	unordered_set<char>dict{ 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U' };
+	int len = s.size();
+	int left = 0;
+	int right = len - 1;
+	char c;
+	while (left < right)
+	{
+		if (dict.count(s[left]) && dict.count(s[right]))
+		{
+			c = s[left];
+			s[left++] = s[right];
+			s[right--] = c;
+		}
+		else if (dict.count(s[left]) == 0)
+			left++;
+		else right--;
+	}
+	return s;
+}
