@@ -1,0 +1,77 @@
+给定一个整数数组 nums，返回区间和在 [lower, upper] 之间的个数，包含 lower 和 upper
+区间和 S(i, j) 表示在 nums 中，位置从 i 到 j 的元素之和，包含 i 和 j (i ≤ j)
+说明:
+最直观的算法复杂度是 O(n^2) ，请在此基础上优化你的算法
+
+输入: nums = [-2,5,-1], lower = -2, upper = 2,
+输出: 3 
+解释: 3个区间分别是: [0,0], [2,2], [0,2]，它们表示的和分别为: -2, -1, 2
+
+方法：暴力法，两次遍历尝试所有的可能
+时间复杂度O(N^2),空间复杂度O(N)
+int countRangeSum(vector<int>& nums, int lower, int upper) {
+	long long sum = 0;
+	multiset<long long>helper;
+	helper.insert(0);
+	int ans = 0;
+	for (int& num : nums)
+	{
+		sum += num;
+		ans += distance(helper.lower_bound(sum - upper), helper.upper_bound(sum - lower));
+		helper.insert(sum);
+	}
+	return ans;
+}
+
+方法2：数组中S[i]代表到第i个元素的和，那么区间和S(i,j)=S[j]-S[j], 利用归并排序来计算有多少在范围内的区间，
+假如左边4个值已经排好序为1，2，3，4，右边4个值也排好序是3，5，6，7，区间为-2~2，
+由于各自区间中有多少在范围内已经计算好，那么只需计算右边中的和到左边中的和有多少在区间中即可
+时间复杂度O(NlogN)，空间复杂度O(N)
+int merge(vector<long long>&S, vector<long long>&assist, int start, int end, int lower, int upper)
+{
+	if (start == end) return 0;
+	int cnt = 0;
+	int mid = start + (end - start) / 2;
+	cnt += merge(S, assist, start, mid, lower, upper);//左半边的数
+	cnt += merge(S, assist, mid+1, end, lower, upper);//右半边的数
+
+	//计算右半边-左半边在范围中的数
+	int left = start; 
+	int Upper = mid + 1;
+	int Lower = mid + 1;
+	while (left <= mid)
+	{
+		while (Lower <= end && S[Lower] - S[left] < lower) Lower++;
+		while (Upper <= end && S[Upper] - S[left] <= upper) Upper++;
+		cnt += Upper - Lower;
+		left++;
+	}
+
+	//归并排序
+	left = start;
+	int right = mid + 1;
+	int pos = start;
+	while (left <= mid || right <= end)
+	{
+		if (left > mid) assist[pos] = S[right++];
+		else if (right > end) assist[pos] = S[left++];
+		else
+		{
+			if (S[left] <= S[right])
+				assist[pos] = S[left++];
+			else
+				assist[pos] = S[right++];
+		}
+		pos++;
+	}
+	for (int i = start; i <= end; i++)
+		S[i] = assist[i]; 
+	return cnt;
+}
+int countRangeSum(vector<int>& nums, int lower, int upper) {
+	int n = nums.size();
+	vector<long long>S(n + 1, 0);
+	vector<long long>assist(n + 1, 0);
+	for (int i = 0; i < n; i++)S[i + 1] = S[i] + nums[i];
+	return merge(S, assist, 0, n, lower, upper);
+}
