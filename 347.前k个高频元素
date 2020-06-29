@@ -1,0 +1,22 @@
+给定一个非空的整数数组，返回其中出现频率前 k 高的元素
+
+
+方法：哈希表+排序
+排序可以选择构建最小堆，也可以使用sort函数排序，也可以利用快速排序中的快速选择选择前k个数
+bool cmd(pair<int, int>a, pair<int, int>b)
+{
+	return a.first > b.first; 
+}
+vector<int> topKFrequent(vector<int>& nums, int k) {
+	unordered_map<int, int>dict;
+	for (int& num : nums)
+		dict[num]++;
+	vector<pair<int, int>>r;
+	for (auto it = dict.begin(); it != dict.end(); it++)
+		r.push_back({ it->second, it->first });
+	sort(r.begin(), r.end(), cmd);
+	vector<int>res;
+	for (int i = 0; i < k; i++)
+		res.push_back(r[i].second);
+	return res;
+}
