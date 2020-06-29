@@ -3,6 +3,7 @@
 
 方法：哈希表+排序
 排序可以选择构建最小堆，也可以使用sort函数排序，也可以利用快速排序中的快速选择选择前k个数
+时间复杂度 O(N)+O(KlogK)，空间复杂度O(N)
 bool cmd(pair<int, int>a, pair<int, int>b)
 {
 	return a.first > b.first; 
