@@ -1,0 +1,40 @@
+给你一个仅包含小写字母的字符串，请你去除字符串中重复的字母，使得每个字母只出现一次。需保证返回结果的字典序最小（要求不能打乱其他字符的相对位置）
+
+方法：使用栈，这个题同字符串中选出k个数且保持先后顺序类似，但是区别是字母出现一次，首先统计各个字符有多少个，然后依次入栈，
+a.当前入栈元素如果不在栈中，比较栈顶元素同当前元素大小，有几种情况：
+1.栈顶元素>当前元素，但是之后没有栈顶元素(dict[st.top()] == 0)，那么栈顶元素一定得在字符串里
+2.栈顶元素>当前元素，并且栈顶元素之后还有(dict[st.top()] > 0)，那么栈顶元素去掉，继续判断下一个栈顶元素
+3.栈顶元素<当前元元素
+当前元素入栈
+b.当前元素在栈里，那么当前元素就不能入栈了，因为栈中该元素后面的元素不能去除
+时间复杂度O(N),空间复杂度O(1)，因为栈中的元素是有限的
+string removeDuplicateLetters(string s) {
+	unordered_map<char, int>dict;
+	unordered_set<char>seen;
+	string res = "";
+	stack<int>st;
+	for (char& c : s)
+		dict[c]++;
+	for (char& c : s)
+	{
+		dict[c]--;
+		if (seen.count(c) == 0)
+		{
+			while (!st.empty() && st.top() > c && dict[st.top()] > 0)
+			{
+				seen.erase(st.top());
+				st.pop();
+				
+			}
+			seen.insert(c);
+			st.push(c);
+		}
+	}
+	while (!st.empty())
+	{
+		res += st.top();
+		st.pop();
+	}
+	reverse(res.begin(), res.end());
+	return res;
+}
