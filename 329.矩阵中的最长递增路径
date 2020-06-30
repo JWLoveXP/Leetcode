@@ -1,0 +1,137 @@
+给定一个整数矩阵，找出最长递增路径的长度。
+
+对于每个单元格，你可以往上，下，左，右四个方向移动。 你不能在对角线方向上移动或移动到边界外（即不允许环绕）
+
+方法：深度优先遍历
+遍历所有的结果，时间复杂度O(2^(MN))，空间复杂度O(MN)
+void dfs(vector<vector<int>>& matrix, int row, int col, int x, int y, int val, int num, int& maxLen)
+{
+	if (num > maxLen)
+		maxLen = num;
+	
+	int temp;
+	if (x > 0 && matrix[x - 1][y] > val)
+	{
+		temp = matrix[x - 1][y];
+		dfs(matrix, row, col, x - 1, y, temp, num + 1, maxLen);
+	}
+	if (x < row-1 && matrix[x + 1][y] > val)
+	{
+		temp = matrix[x + 1][y];
+		dfs(matrix, row, col, x + 1, y, temp, num + 1, maxLen);
+	}
+	if (y > 0 && matrix[x][y-1] > val)
+	{
+		temp = matrix[x][y - 1];
+
+		dfs(matrix, row, col, x, y-1, temp, num + 1, maxLen);
+
+	}
+	if (y < col - 1 && matrix[x][y + 1] > val)
+	{
+		temp = matrix[x][y + 1];
+		dfs(matrix, row, col, x, y+1, temp, num + 1, maxLen);
+	}
+}
+int longestIncreasingPath(vector<vector<int>>& matrix) {
+	if (matrix.empty() || matrix[0].empty())
+		return 0;
+	int maxLen = 0;
+	int row = matrix.size();
+	int col = matrix[0].size();
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			dfs(matrix, row, col, i, j, matrix[i][j], 1, maxLen);
+		}
+	}
+	return maxLen;
+}
+方法2：记忆化搜索，记录已经遍历过的可能，从而不用重复访问，cache[i][j]代表以(i,j)开始的最长路径长度，如果已经记录过则之间返回，没记录过则判断周边四个格子中满足条件的最大值，最后++cache[i][j]，
+因为之前只计算了周边四个格子中满足条件的最大值，还需加上本身
+时间复杂度O(MN)，每个可能访问了一次，空间复杂度O(MN)
+int dfs(vector<vector<int>>& matrix, int row, int col, int x, int y, vector<vector<int>>&cache)
+{
+	if (cache[x][y] > 0)
+		return cache[x][y];
+	//得到周围四个格子中的最大值
+	if (x > 0 && matrix[x - 1][y]> matrix[x][y])
+		cache[x][y] = max(cache[x][y], dfs(matrix, row, col, x - 1, y, cache));
+	if (x < row - 1 && matrix[x + 1][y]> matrix[x][y])
+		cache[x][y] = max(cache[x][y], dfs(matrix, row, col, x + 1, y, cache));
+	if (y > 0 && matrix[x][y - 1]> matrix[x][y])
+		cache[x][y] = max(cache[x][y], dfs(matrix, row, col, x, y - 1, cache));
+	if (y < col - 1 && matrix[x][y + 1]> matrix[x][y])
+		cache[x][y] = max(cache[x][y], dfs(matrix, row, col, x, y + 1, cache));
+	return ++cache[x][y];
+}
+int longestIncreasingPath(vector<vector<int>>& matrix) {
+	if (matrix.empty() || matrix[0].empty())
+		return 0;
+	int maxLen = 0;
+	int row = matrix.size();
+	int col = matrix[0].size();
+	vector<vector<int>>cache(row, vector<int>(col, 0));
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			maxLen = max(maxLen, dfs(matrix, row, col, i, j, cache));
+		}
+	}
+	return maxLen;
+}
+
+方法3：动态规划，对于dp[i]，转移方程为周边四个格子中满足递增条件的最大值+1，但是在这个问题中如何在计算dp[i]前获得周边四个值呢？
+这里利用一个剥洋葱的方法，每个节点都有一个出度和入度，入度代表周边比它小的值，如果某个节点的入度为0时，说明已经计算出该节点的为终点的最大值，那么把它加入队列，可以计算下一层的节点的最长路径
+时间复杂度O(MN)，每个可能访问了一次，空间复杂度O(MN)
+class Solution {
+    public int longestIncreasingPath(int[][] matrix) {
+        if (matrix==null||matrix.length==0){
+            return 0;
+        }        
+        int[][] count = new int[matrix.length][matrix[0].length];
+        int[][] direction = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+        //统计每个点的入度用count数组保存，因为是递增，所以如果在上下左右，每发现一个比当前点小的数，当前点入度+1
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                for (int[] d : direction) {
+                    if (longestIncreasingPathVerify(matrix, i + d[0], j + d[1]) && matrix[i + d[0]][j + d[1]] < matrix[i][j]) {
+                        count[i][j]++;
+                    }
+                }
+            }
+        }
+        Deque<int[]> deque = new LinkedList<>();
+        //count数组中所有入度为0的点加入队列
+        for (int i = 0; i < count.length; i++) {
+            for (int j = 0; j < count[i].length; j++) {
+                if (count[i][j] == 0) {
+                    deque.add(new int[]{i, j});
+                }
+            }
+        }
+        int ans = 0;
+        while (!deque.isEmpty()) {
+            ans++;
+            //这个跟课程表I那个题不一样，需要一层一层的出列，而不是一个一个的出，因为课程表那个不关心队列长度
+            for (int size = deque.size(); size > 0; size--) {
+                int[] poll = deque.poll();
+                for (int[] d : direction) {
+                    if (longestIncreasingPathVerify(matrix, poll[0] + d[0], poll[1] + d[1]) && matrix[poll[0] + d[0]][poll[1] + d[1]] > matrix[poll[0]][poll[1]]) {
+                        if (--count[poll[0] + d[0]][poll[1] + d[1]] == 0) {
+                            deque.add(new int[]{poll[0] + d[0], poll[1] + d[1]});
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    private boolean longestIncreasingPathVerify(int[][] matrix, int i, int j) {
+        return i >= 0 && j >= 0 && i < matrix.length && j < matrix[i].length;
+    }
+}
+
