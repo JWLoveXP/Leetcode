@@ -1,0 +1,33 @@
+给定一个已排序的正整数数组 nums，和一个正整数 n 。从 [1, n] 区间内选取任意个数字补充到 nums 中，使得 [1, n] 区间内的任何数字都可以用 nums 中某几个数字的和来表示。
+请输出满足上述要求的最少需要补充的数字个数
+
+
+方法：首先需要知道覆盖范围，比如
+1->[1,2)
+1,2->[1,4)
+1,2,4->[1.8)
+假设 miss 是缺少的数字中最小的，则区间 [1, miss) (左闭右开) 已经被完全覆盖。为了覆盖 miss，我们需要添加某些小于等于 miss 的数字。否则将不可能覆盖到
+对于缺少的数字x，已知覆盖范围为[1，miss），那么补上x时，覆盖范围就变成[1，miss）和[x，x+miss）,由于x<=miss，所以覆盖范围为[1，miss+x），为了使范围最大，所以取x=miss。
+算法流程：贪心算法
+1.初始化miss和count
+2.如果nums[i]<= miss，miss += nums[i++]，用数组中的数字补全
+  如果nums[i] > miss，miss += miss，数组中未用过的数据大于miss，则不能用来补偿miss，得用一个新的数字，则使用miss(最大的x)
+
+
+int minPatches(vector<int>& nums, int n) {
+	int miss = 1;
+	int count = 0;
+	int i = 0;
+	int len = nums.size();
+	while (miss <= n)
+	{
+		if (i < len && miss >= nums[i])
+			miss += nums[i++];
+		else
+		{
+			miss += miss;
+			count++;
+		}
+	}
+	return count;
+}
