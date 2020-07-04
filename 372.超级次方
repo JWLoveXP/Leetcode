@@ -1,0 +1,27 @@
+你的任务是计算 a^b 对 1337 取模，a 是一个正整数，b 是一个非常大的正整数且会以数组形式给出
+
+方法：首先得知道取余的结合律(a*b)%c = ((a%c)*(b%c))%c，以及快速幂的求解，快速幂的求解可以分成两部分在通过相乘得到
+由于b是一个很大数组如[1,4,5,6]，那么可以将数组分成两部分[1,4,5]和[6]，结果分别为part1和part2，对于part1，还需要pow(part1, 10)，因为实际上的数字是1450
+int cal(int a, int c)
+{
+	if (c == 0)
+		return 1;
+	int val = cal(a, c / 2);
+	int res = (val*val) % 1337;
+	if (c % 2 == 0)
+		return res;
+	else
+		return (res*(a%1337)) % 1337;
+}
+
+int superPow(int a, vector<int>& b) {
+	int n = b.size();
+	if (n == 0)
+		return 1;
+	int last = b.back();
+	b.pop_back();
+	int part1 = cal(a, last);
+	int part2 = cal(superPow(a, b), 10);
+	return (part1*part2) % 1337;
+
+}
