@@ -1,0 +1,46 @@
+给出一个由无重复的正整数组成的集合，找出其中最大的整除子集，子集中任意一对 (Si，Sj) 都要满足：Si % Sj = 0 或 Sj % Si = 0。
+
+如果有多个目标子集，返回其中任何一个均可
+
+
+方法：动态规划。首先给数组从小到大排序，dp[i]代表第i个元素结尾的最大的子集，对于dp[i]，对于j(0~i-1)，如果nums[j]%nums[i]==0，那么以j结尾的所有元素都能加到dp[i]中，题中要求最大，那么就在0~i-1中
+找到一个最大的子集
+转移方程为 dp[i] = max(dp[j]) + nums[i] j = 0~i-1
+时间复杂度O(N^2)，空间复杂度O(N^2)
+vector<int> largestDivisibleSubset(vector<int>& nums) {
+	int len = nums.size();
+	if (len <= 1)
+		return nums;
+	sort(nums.begin(), nums.end());
+	vector<vector<int>>dp(len);
+	dp[0] = vector<int>{nums[0]};
+	int i, j, val, count;
+	vector<int>temp;
+	int maxCount = 1;
+	int pos = 0;
+	for (i = 1; i < len; i++)
+	{
+		val = -1;
+		count = 0;
+		for (j = i - 1; j >= 0; j--)
+		{
+			if (nums[i] % nums[j] == 0 && dp[j].size() > count)
+			{
+				count = dp[j].size();
+				val = j;
+			}
+		}
+		if (val != -1)
+			dp[i] = dp[val];
+		dp[i].push_back(nums[i]);
+		if (dp[i].size() > maxCount)
+		{
+			maxCount = dp[i].size();
+			pos = i;
+		}
+
+	}
+	return dp[pos]; 
+}
+方法2：优化上一种方法种的空间，对于dp[i]不用记录最大的子集，只要记录以i结尾的最大的子集数量以及前一个元素，从而能够减少空间复杂度，这里未写代码，可自行尝试
+时间复杂度O(N^2)，空间复杂度O(N)
