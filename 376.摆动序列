@@ -1,0 +1,72 @@
+如果连续数字之间的差严格地在正数和负数之间交替，则数字序列称为摆动序列。第一个差（如果存在的话）可能是正数或负数。少于两个元素的序列也是摆动序列。
+
+例如， [1,7,4,9,2,5] 是一个摆动序列，因为差值 (6,-3,5,-7,3) 是正负交替出现的。相反, [1,4,7,2,5] 和 [1,7,4,5,5] 不是摆动序列，
+第一个序列是因为它的前两个差值都是正数，第二个序列是因为它的最后一个差值为零。
+
+给定一个整数序列，返回作为摆动序列的最长子序列的长度。 通过从原始序列中删除一些（也可以不删除）元素来获得子序列，剩下的元素保持其原始顺序。
+
+方法1：动态规划，dp[i]代表以i结尾的最大的摆动序列的长度，遍历0~i-1,找到最大的子序列
+时间复杂度O(N^2),空间复杂度O(N)
+int wiggleMaxLength(vector<int>& nums) {
+	int n = nums.size();
+	if (n <= 1)
+		return n;
+	vector<int>val(n);//存放差值
+	vector<int>count(n);//存放计数
+	val[0] = 0;//第0个元素差值为0
+	count[0] = 1;//第0个元素计数为1
+
+	int cur_count, cur_val;//当前元素的最大计数以及差值
+	int max_count = 1;
+	int i, j;
+	for (i = 1; i < n; i++)
+	{
+		cur_count = 1;
+		cur_val = 0;
+		for (j = i - 1; j >= 0; j--)
+		{
+			if ((nums[i] - nums[j])*val[j] < 0 && count[j] >= cur_count)
+			{
+				cur_count = count[j] + 1;
+				cur_val = nums[i] - nums[j];
+			}
+			else if (nums[i] == nums[j] && count[j] >= cur_count)
+			{
+				cur_count = count[j];
+				cur_val = val[j];
+			}
+			else if (val[j] == 0 && count[j] >= cur_count)
+			{
+				cur_count = count[j] + 1;
+				cur_val = nums[i] - nums[j];
+			}
+
+		}
+		val[i] = cur_val;
+		count[i] = cur_count;
+		if (cur_count > max_count)
+			max_count = cur_count;
+	}
+	return max_count;
+}
+方法2：线性动态规划
+对于第i个元素，他可以时摆动序列中上升序列，也可以是摆动序列中的下降序列，维护两个变量，up和down表示第i个元素之前的序列中以上升序列结尾的子序列的长度和以下降序列结尾的子序列的长度
+第i个元素在序列中只有三种可能上升，下降，不变
+上升时，前一个元素得是下降的，所以up = down + 1
+下降时，前一个元素得是上的，所以down = up + 1
+相等时，则up和down不变
+时间复杂度O(N),空间复杂度O(1)
+int wiggleMaxLength(vector<int>& nums) {
+	int n = nums.size();
+	if (n <= 1)
+		return n;
+	int up = 1, down = 1;
+	for (int i = 1; i < n; i++)
+	{
+		if (nums[i] > nums[i - 1])//上升
+			up = down + 1;
+		else if (nums[i] < nums[i - 1])//下降
+			down = up + 1;
+	}
+	return up > down ? up : down;
+    }
