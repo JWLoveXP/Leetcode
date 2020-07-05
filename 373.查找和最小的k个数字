@@ -1,0 +1,76 @@
+给定两个以升序排列的整形数组 nums1 和 nums2, 以及一个整数 k
+
+定义一对值 (u,v)，其中第一个元素来自 nums1，第二个元素来自 nums2
+
+找到和最小的 k 对数字 (u1,v1), (u2,v2) ... (uk,vk)
+
+
+方法：对于这类取最大/最小的k对数字，一般可以使用堆来实现。
+在这题种，一个数字来自nums1，一个数字来自nums2，让数组1作为base，用另一个数组（长度和num1相等）来记录和从小到大过程中num1中每个元素的另一半现在在num2数组中的位置，每次循环找出是和最小的那一对，
+然后让那一对num2数组中的位置往前走一步，然后再次比较选出最小（使用优先级队列）
+重点是对于优先队列的应用
+基础知识：C++种优先队列，priority_queue<Type, Container, Functional>，Type代表数据类型，Container代表对应的容器，Functional只有在自定义的数据时才使用，默认是大顶堆
+
+定义Function的方法：
+1.作为函数，bool cmp(const Type& a, const Type& b){...},不能放在类内
+2.作为结构体	struct cmp {
+		bool operator() (const Type& a, Type& b) {...}
+	};快压放在类内
+
+在这题种Type类型为 pair<int, pair<int, int> >，第一个int类型为两数之和，第二个int类型对应的nums2种的数和下标
+时间复杂度O（(k+N)logN），N是数组nums1的长度，NlogN为初始化构建优先队列，因为插入一个元素为logN。取出为O(1), klogN为k次插入，
+  class Solution {
+public:
+
+	struct cmp {
+		bool operator() (const pair<int, pair<int, int> >& a, const pair<int, pair<int, int> >& b) {
+			return a.first + a.second.first > b.first + b.second.first;
+		}
+	};
+
+	vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+
+		int len1 = nums1.size();
+		int len2 = nums2.size();
+		if (len1 == 0 || len2 == 0) {
+			return vector<vector<int>>();
+		}
+		int flag = 0;
+		//如果nums1的长度大于nums2 则调换，保证nums1较短
+		if (len1 > len2) {
+			flag = 1;
+			swap(nums1, nums2);
+			swap(len1, len2);
+		}
+
+		//pair<int,pair<int,int> >，外层pair第一个类型int是nums1 中的数， 第二个类型pair<int,int> 表示的是nums2中的数和对应的下标
+		priority_queue <pair<int, pair<int, int> >, vector<pair<int, pair<int, int> > >, cmp > q;
+		vector<vector<int>> ans;
+
+		//队列的初始化，将nums1中的所有数都入栈，每个数的初始指针设置为1
+		for (int i = 0; i < len1; i++) {
+			pair<int, pair<int, int> > t(nums1[i], pair<int, int>(nums2[0], 0));
+			q.push(t);
+		}
+
+		//取前k个最小的数，每次弹出最小的一个值，同时将其指针后移一位并入栈（如果指针没有到尾的话）
+		for (int i = 0; i < k && !q.empty(); i++) {
+			pair<int, pair<int, int> > t = q.top();
+			q.pop();
+			vector<int> s();
+			if (flag == 0) {
+				ans.push_back({ t.first, t.second.first });
+			}
+			else {
+				ans.push_back({ t.second.first, t.first });
+			}
+
+			if (t.second.second < len2 - 1) {
+				t.second.second++;
+				t.second.first = nums2[t.second.second];
+				q.push(t);
+			}
+		}
+		return ans;
+	}
+};
