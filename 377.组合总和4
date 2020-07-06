@@ -1,0 +1,22 @@
+给定一个由正整数组成且不存在重复数字的数组，找出和为给定目标正整数的组合的个数
+
+请注意，顺序不同的序列被视作不同的组合
+
+方法：属于组合背包问题，dp[i]代表第i个数字组合个数，dp[i] = dp[i - nums[j]]
+int combinationSum4(vector<int>& nums, int target) {
+	int len = nums.size();
+	if (len == 0)
+		return 0;
+	vector<int>dp(target + 1, 0);
+	dp[0] = 1;
+	int i, j;
+	for (i = 0; i <= target; i++)
+	{
+		for (j = 0; j < len; j++)
+		{
+			if (i >= nums[j])
+				dp[i] = (dp[i] >= INT_MAX - dp[i - nums[j]]) ? INT_MAX : dp[i] + dp[i - nums[j]];//防溢出，SB题目
+		}
+	}
+	return dp[target];
+}
