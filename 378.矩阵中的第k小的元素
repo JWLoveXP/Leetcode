@@ -1,0 +1,45 @@
+给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。
+请注意，它是排序后的第 k 小元素，而不是第 k 个不同的元素
+
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8
+方法1：对于一个已经从左到右，从上到下排好序的数组，可以利用归并排序，如合并K个链表一样，依次合并直到第k个元素,构建最小堆
+时间复杂度O(klogN),归并k次，每次从堆中插入和弹出的时间复杂度均为logn,
+
+方法2：二分查找，对于一个数，如果能够知道有矩阵中有多少数字小于等于它的话就能够进行二分查找了，那么如何知道呢？可以从左下角出发，如果当前元素小于等于mid，那么将同一列小于等于该元素的加到count中，
+并移到下一列，如果大于mid，则上移一行，最终可以得到有多少数字小于mid。在这个二分问题中，比较特殊。对于例子中，小于等于14的也有8个，但是14并不在矩阵中，13才是最后的答案
+因此，如果count >= k时，则right = mid,而当count < k,left = mid+1
+时间复杂度O(nlog(max - min))，空间复杂度O(1)
+int kthSmallest(vector<vector<int>>& matrix, int k) {
+	int n = matrix.size();
+	int min = matrix[0][0];
+	int max = matrix[n - 1][n - 1];
+	int count, mid;
+	int x, y;
+	while (min < max)
+	{
+		mid = min + (max - min) / 2;
+		count = 0;
+		x = n - 1;
+		y = 0;
+		while (x >= 0 && y < n)
+		{
+			if (matrix[x][y] > mid)
+				x--;
+			else
+			{
+				count += x + 1;
+				y++;
+			}
+		}
+		if (count < k)
+			min = mid + 1;
+		else
+			max = mid;
+	}
+	return min;
+}
