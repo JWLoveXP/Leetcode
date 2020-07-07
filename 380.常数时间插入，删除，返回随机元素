@@ -1,0 +1,55 @@
+设计一个支持在平均 时间复杂度 O(1) 下，执行以下操作的数据结构。
+
+    insert(val)：当元素 val 不存在时，向集合中插入该项。
+    remove(val)：元素 val 存在时，从集合中移除该项。
+    getRandom：随机返回现有集合中的一项。每个元素应该有相同的概率被返回
+
+方法：哈希表+一维数组
+对于哈希表，可以做到插入和删除的常数时间，但是对于返回随机值是不能实现常数时间的。对于一维数组，可以实现插入和返回随机值的常数时间，如果删除某个元素其时间复杂度为O(N)，除非是在末尾，
+那么这两个要怎么结合，才能实现三个的常数时间呢？
+哈希表中存储(数值，元素在一维数组中的位置)，而一维数组存储数值，当需要移除时，将要移除的数字的位置同最后一个数字交换位置，从而可以实现O(1)删除
+class RandomizedSet {
+public:
+	/** Initialize your data structure here. */
+	unordered_map<int, int>dict;
+	vector<int>myval;
+	int count;
+	RandomizedSet() {
+		count = 0;
+	}
+
+	/** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+	bool insert(int val) {
+		if (dict.count(val) == 0)
+		{
+			
+			myval.push_back(val);
+			dict[val] = count; 
+			count++;
+			return true;
+		}
+		return false;
+	}
+
+	/** Removes a value from the set. Returns true if the set contained the specified element. */
+	bool remove(int val) {
+		if (dict.count(val) > 0)
+		{
+			myval[dict[val]] = myval[count-1];
+			dict[myval[count - 1]] = dict[val];
+			myval.pop_back();
+			dict.erase(val); 
+			count--;
+			return true;
+		}
+		return false;
+	}
+
+	/** Get a random element from the set. */
+	int getRandom() {
+		int size = dict.size();
+		int num = rand() % size;
+		return myval[num];
+		
+	}
+};
