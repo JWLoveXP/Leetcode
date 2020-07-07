@@ -1,0 +1,52 @@
+打乱一个没有重复元素的数组
+
+// 以数字集合 1, 2 和 3 初始化数组。
+int[] nums = {1,2,3};
+Solution solution = new Solution(nums);
+
+// 打乱数组 [1,2,3] 并返回结果。任何 [1,2,3]的排列返回的概率应该相同。
+solution.shuffle();
+
+// 重设数组到它的初始状态[1,2,3]。
+solution.reset();
+
+// 随机返回数组[1,2,3]打乱后的结果。
+solution.shuffle();
+
+方法：一个无重复数组排列的方式有n!，在C++中rand()可以得到一个随机数，rand()%a可以得到0~a-1的随机数，i从end-1~0遍历，每次在0~i-1找到一个随机数，同nums[i]交换，来确定nums[i]的值，
+从而能确保有n！种可能结果
+时间复杂度O(n)，空间复杂度O(n)
+class Solution {
+public:
+	vector<int> ele;
+	Solution(vector<int>& nums) {
+		for (auto& num : nums)
+			ele.push_back(num);
+
+
+	}
+	/** Resets the array to its original configuration and return it. */
+	vector<int> reset() {
+		return ele;
+	}
+
+	/** Returns a random shuffling of the array. */
+	vector<int> shuffle() {
+		if (ele.size() <= 1)
+			return ele;
+		else
+		{
+			vector<int>temp(ele.begin(), ele.end());
+			int end = ele.size();
+			int num;
+			srand((int)time(0));
+			for (int i = end-1; i >= 0; i--)
+			{
+				num = rand() % (i + 1);
+				swap(temp[num], temp[i]);
+			}
+			return temp;
+		}
+
+	}
+};
