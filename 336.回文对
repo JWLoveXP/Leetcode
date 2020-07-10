@@ -1,0 +1,90 @@
+给定一组唯一的单词， 找出所有不同 的索引对(i, j)，使得列表中的两个单词， words[i] + words[j] ，可拼接成回文串
+
+方法1：暴力搜索，遍历所有的可能，判断组合字符是否是回文串
+时间复杂度O(N^2)，空间复杂度O(N)
+
+方法2：对于两个字符串s1和s2，如果两者能够构成回文串，有三种可能，
+1.s1.size() == s2.size()
+2.s1.size() > s2.size()，那么多余的字符串需要构成回文，且s1在前
+3.s1.size() < s2.size()，那么多余的字符串需要构成回文，且s2在前
+
+当s1和s2构成回文串时，s1的倒序可以和s2匹配一部分，如果s1长，那么s1多余部分需构成回文串，
+如果s2长，那么s2多余部分需构成回文串
+
+给每个单词构建一个倒序的前缀树，并且如果某个字符之后的字符能够构成回文串，则在该字符的suffixs数组中加入该单词的序号，如单词babb倒序加入，第一b加入时，后面bab构成回文串，则在b字符者一层的suffixs数组中加入该序号。
+然后遍历所有的单词，如果单词能够能够在前缀树找那个找到相同的字符，并且遍历到某个单词的结尾了，那么判断该单词剩余字符是否是回文(该情况包含1和3两种情况)
+如果该单词遍历完毕，则判断当前层的字符的suffixs中是否有单词剩余的字符串能够构成回文
+struct TreeNode
+{
+	TreeNode* children[26];
+	int index;
+	vector<int>suffixs;
+
+	TreeNode()
+	{
+        memset(children, 0, sizeof(children));
+		index = -1;
+	}
+};
+bool judge(string& word, int start, int end)
+{
+
+	while (start <= end)
+	{
+		if (word[start] == word[end])
+		{
+			start++;
+			end--;
+		}
+		else
+			return false;
+	}
+	return true;
+}
+vector<vector<int>> palindromePairs(vector<string>& words) {
+
+	TreeNode* root = new TreeNode();
+	int i, j, len;
+	TreeNode* cur;
+	//倒序建立字典树
+	for (int i = 0; i < words.size();i++)
+	{
+		len = words[i].size()-1;
+		cur = root;
+		if (judge(words[i], 0, len))//整个字符串都是回文串
+			cur->suffixs.push_back(i);
+		for (j = len; j >= 0; j--)
+		{
+			if (cur->children[words[i][j] - 'a'] == NULL)
+				cur->children[words[i][j] - 'a'] = new TreeNode();
+			cur = cur->children[words[i][j] - 'a'];
+			if (judge(words[i], 0, j - 1))//如果当前节点之前字串是回文字串的话，记录
+				cur->suffixs.push_back(i);
+		}
+		cur->index = i;
+	}
+	//搜索
+	vector<vector<int>>res;
+	for (int i = 0; i < words.size(); i++)
+	{
+		len = words[i].size();
+		cur = root;
+		for (j = 0; j <len; j++)
+		{
+			if (judge(words[i], j, len - 1) && cur->index != -1)
+				res.push_back({ i, cur->index });
+			int index = words[i][j] - 'a';
+			if (cur->children[index] == NULL)
+				break;
+			cur = cur->children[index];
+		}
+		if (j == len)
+		{
+			for (int k:cur->suffixs)
+            if (i != k)
+				res.push_back({ i, k});
+		}
+
+	}
+	return res;
+}
