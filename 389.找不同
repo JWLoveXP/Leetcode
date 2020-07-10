@@ -1,0 +1,32 @@
+给定两个字符串 s 和 t，它们只包含小写字母。
+字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。
+请找出在 t 中被添加的字母。
+
+
+方法1：哈希表记录s字符串中字符数量，遍历t，如果有t中字符对应的数组中的数量等于0，则说明改字符是多余的字符，如果大于1，则减一。由于只有26个小写字母，使用数组会比哈希表速度更快
+时间复杂度O(N),空间复杂度O(N)
+char findTheDifference(string s, string t) {
+	vector<int>dict(26, 0);
+	for (char& c : s)
+		dict[c - 'a']++;
+	for (char& c : t)
+	{
+		if (dict[c - 'a'] == 0)
+			return c;
+		dict[c - 'a']--;
+	}
+	return 'a';
+}
+
+
+方法2：在之前的题中，我们遇到过一个题，在数组中找到出现一次的数字，其余的数字出现两次，我们的解决方法是使用异或，两个相同数字的异或为0，而0和任何数字的异或都是数字本身，在这道题中，
+是其余字母出现了两次，一个字母出现了一次，所以也可以使用异或
+时间复杂度O(N),空间复杂度O(1)
+char findTheDifference(string s, string t) {
+	char res = 0;
+	int len = s.size(); 
+	for (int i = 0; i < len; i++)
+		res ^= s[i] ^ t[i];
+	res ^= t[len];
+	return res;
+}
