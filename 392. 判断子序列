@@ -1,0 +1,46 @@
+给定字符串 s 和 t ，判断 s 是否为 t 的子序列。
+你可以认为 s 和 t 中仅包含英文小写字母。字符串 t 可能会很长（长度 ~= 500,000），而 s 是个短字符串（长度 <=100）。
+字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而不改变剩余字符相对位置形成的新字符串。（例如，"ace"是"abcde"的一个子序列，而"aec"不是
+
+
+方法：双指针，一个指针指向s，一个指针指向t,当s[j] == t[i]时，i++,而j一直在遍历，如果t是s的字序列的话，最终j会到达末尾
+时间复杂度O(N)，空间复杂度O(1)
+bool isSubsequence(string s, string t) {
+	int i = 0;
+	int j = 0;
+	int m = s.size();
+	int n = t.size();
+	while (i < n)
+	{
+		if (s[j] == t[i])
+			j++;
+		if (j == m)
+			break;
+		i++;
+	}
+	return j == m;
+}
+
+进阶：对于t中的第i个字符，记录从第i个字符之后，所有可能出现的字符的位置，即建立一个dp[n][26],这样可以实现快速的跳转
+
+    public boolean isSubsequence(String s, String t) {
+        // 预处理
+        t = " " + t; // 开头加一个空字符作为匹配入口
+        int n = t.length();
+        int[][] dp = new int[n][26]; // 记录每个位置的下一个ch的位置
+        for (char ch = 0; ch < 26; ch++) {
+            int p = -1;
+            for (int i = n - 1; i >= 0; i--) { // 从后往前记录dp
+                dp[i][ch] = p;
+                if (t.charAt(i) == ch + 'a') p = i;
+            }
+        }
+        // 匹配
+        int i = 0;
+        for (char ch : s.toCharArray()) { // 跳跃遍历
+            i = dp[i][ch - 'a'];
+            if (i == -1) return false;
+        }
+        return true;
+    }
+
