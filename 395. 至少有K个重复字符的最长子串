@@ -1,0 +1,32 @@
+找到给定字符串（由小写字符组成）中的最长子串 T ， 要求 T 中的每一字符出现次数都不少于 k 。输出 T 的长度
+
+方法：分治法，统计当前字符串中的每个字符的数量，如果其数量小于k,那么比如不会包含在最终的结果中，即把字符串分成了更小的字串
+int findLongestSubstring(string& s, int start, int end, int k)
+{
+	unordered_map<int, int>dict;
+	for (int i = start; i <= end; i++)
+		dict[s[i]]++;
+	vector<int>split;
+	for (int i = start; i <= end; i++)
+	{
+		if (dict[s[i]] < k)
+			split.push_back(i);
+	}
+	if (split.empty())
+		return end - start + 1;
+	split.push_back(end + 1);//注意把最后的end+1也加入split中，加1是因为之后有减一
+	int left = 0;
+	int maxval = 0;
+	for (int& right : split)
+	{
+		if (right - left >= k)
+			maxval = max(maxval, findLongestSubstring(s, left, right - 1, k));
+		left = right + 1;
+	}
+
+	return maxval;
+}
+int longestSubstring(string s, int k) {
+	int r = findLongestSubstring(s, 0, s.size() - 1, k);
+	return r;
+}
