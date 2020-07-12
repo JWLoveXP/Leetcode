@@ -1,0 +1,57 @@
+给定一个经过编码的字符串，返回它解码后的字符串。
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入
+
+方法：辅助栈，当遇到的字符不是']'，则都进栈，而当遇到']'，此时要做的是把[]中的重复字符以及前面的数字找不出，以'['作为标识，取出重复字符，然后再取出数字，将得到的新的字符串放入栈，继续前面的过程
+最后再从栈中得到最终的字符
+时间复杂度O(N),空间复杂度O(N)
+string decodeString(string s) {
+
+	int n = s.size();
+	stack<string>st;
+	string res = "";
+	string temp, r, t;
+	int count, val, i, j;
+	for (i = 0; i < n; i++)
+	{
+		//不是'['进栈
+		if (s[i] != ']')
+		{
+			t = "";
+			t += s[i];
+			st.push(t);
+		}
+		else
+		{
+			temp = "";
+			//取出[]中的内容
+			while (st.top()[0] != '[')
+			{
+				temp = st.top() + temp;
+				st.pop();
+			}
+			st.pop();//去掉[
+			//取出数字
+			val = 0;
+			count = 1;
+			while (!st.empty() && st.top()[0] >= '0' && st.top()[0] <= '9')
+			{
+				val += (st.top()[0] - '0') *count;
+				count *= 10;
+				st.pop();
+			}
+			r = "";
+			for (j = 0; j < val; j++)
+				r += temp;
+			st.push(r);
+		}
+	}
+	while (!st.empty())
+	{
+		res = st.top() + res;
+		st.pop();
+	}
+	return res;
+
+}
