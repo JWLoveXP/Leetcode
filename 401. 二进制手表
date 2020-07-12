@@ -1,0 +1,46 @@
+二进制手表顶部有 4 个 LED 代表 小时（0-11），底部的 6 个 LED 代表 分钟（0-59）。
+每个 LED 代表一个 0 或 1，最低位在右侧
+
+	void findNum(int num, int start, vector<string>&res, int val, int count, int maxval)
+	{
+		if (num == 0)
+		{
+			if (val <= maxval)
+				res.push_back(to_string(val));
+		}
+		else
+		{
+			for (int i = start; i <= count - num; i++)
+				findNum(num - 1, i + 1, res, val + pow(2, i), count, maxval);
+		}
+	}
+	vector<string> readBinaryWatch(int num) {
+		vector<string>res;
+		if (num > 10)
+			return res;
+		for (int i = 0; i < 5; i++)
+		{
+			if (num - i >= 0 && num - i <= 6)
+			{
+				vector<string>first;
+				vector<string>second;
+				findNum(i, 0, first, 0, 4, 11);
+				if (first.empty())
+					continue;
+				findNum(num - i, 0, second, 0, 6, 59);
+				if (second.empty())
+					continue;
+				for (string& s1 : first)
+				{
+					for (string& s2 : second)
+					{
+						if (s2.size() == 1)
+							res.push_back(s1 + ":0" + s2);
+						else
+							res.push_back(s1 + ":" + s2);
+					}
+				}
+			}
+		}
+		return res;
+	}
