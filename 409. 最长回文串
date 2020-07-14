@@ -1,0 +1,29 @@
+给定一个包含大写字母和小写字母的字符串，找到通过这些字母构造成的最长的回文串。
+在构造过程中，请注意区分大小写。比如 "Aa" 不能当做一个回文字符串。
+注意:
+假设字符串的长度不会超过 1010
+
+方法：首先先统计，由于只有小写字母和大写字母，所以使用数组效率会更高，统计完后如果该字母的数量多于1的话，那么取出偶数个，最后如果ans小于字符串总长度，那么可以在加一，即以某个单一字符作为中间点
+时间复杂度O(N),空间复杂度O(1)
+int longestPalindrome(string s) {
+	int n = s.size();
+	int ans = 0;
+	vector<int>big(26, 0);
+	vector<int>small(26, 0);
+	for (int i = 0; i < n; i++)
+	{
+		if (s[i] >= 'a' && s[i] <= 'z')
+			small[s[i] - 'a']++;
+		else 
+			big[s[i] - 'A']++;
+	}
+	for (int i = 0; i < 26; i++)
+	{
+		if (small[i] > 1)
+			ans += small[i] - small[i] % 2;
+		if (big[i] > 1)
+			ans += big[i] - big[i] % 2;
+		
+	}
+	return ans < n ? ans+1 : ans;
+}
