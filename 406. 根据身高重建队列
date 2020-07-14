@@ -1,0 +1,49 @@
+假设有打乱顺序的一群人站成一个队列。 每个人由一个整数对(h, k)表示，其中h是这个人的身高，k是排在这个人前面且身高大于或等于h的人数。 编写一个算法来重建这个队列。
+
+注意：
+总人数少于1100人。
+
+示例
+
+输入:
+[[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
+
+输出:
+[[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
+
+
+方法，贪心算法，首先按身高从大到小排序，而同一身高，k小的在前，因为身高高的是看不见身高低的，所以升高低的插在哪来都不会影响到身高高的的排序，然后从左到右遍历，把找个人插到k对于的索引
+对上面这个例子，排序之后为[[7 0] [7 1] [6 1] [5 0] [5 2] [4 4]]
+对于[6, 1]，不管插入到两个7的哪里都不会对7产生影响，而[6,1]之前的所有人都是高于它的，所有按索引插到对应的位置即可满足要求
+时间复杂度：排序为O(NlogN)，然后插入为O(N^2),所以最后为O(N^2)
+空间复杂度O(N)
+ bool reconstructCmp(vector<int>& a, vector<int>& b)
+	{
+		if (a[0] >  b[0])
+			return true;
+		else if (a[0] < b[0])
+			return false;
+		else
+		{
+			if (a[1] < b[1])
+				return true;
+			else
+				return false;
+		}
+	}
+	void insert(vector<int>& p, vector<vector<int>>&res, int i)
+	{
+		res.push_back(p);
+		for (int j = res.size() - 1; j>i; j--)
+			res[j] = res[j - 1];
+		res[i] = p;
+	}
+	vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+		sort(people.begin(), people.end(), reconstructCmp);
+		int n = people.size();
+		vector<vector<int>>res;
+		for (int i = 0; i < n; i++)
+			insert(people[i], res, people[i][1]);
+		return res;
+
+	}
