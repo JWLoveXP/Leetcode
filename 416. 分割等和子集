@@ -1,0 +1,66 @@
+给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等
+
+方法：题意的转换很重要！在这个题中，寻找两个自己元素和相同，也就是说找一个子集，使其和等于总和的一半，而当总和是个奇数时，此时可能时不成立的，只有偶数时才可能是存在的。
+有两种方式实现这个题目，
+1.回溯+剪支，给数组排序，然后回溯，当遇到和第一个字符重复的字符时，直接跳过，如果当前元素大于目标值，那么也不用在判断之后的字符了，必然是不成立的。
+bool judgePartition(vector<int>& nums, int target, int index)
+{
+	if (target == 0)return true;
+	for (int i = index; i < nums.size(); i++)
+	{
+		if (i >index && nums[i] == nums[i - 1])
+			continue;
+		if (target < nums[i])
+			return false;
+		if (judgePartition(nums, target - nums[i], i + 1))
+			return true;
+	}
+	return false;
+}
+bool canPartition(vector<int>& nums) {
+	bool res = false;
+	int total = 0;
+	for (int& num : nums)
+		total += num;
+	if (total % 2 == 1)
+		return  false;
+	if (total == 0)
+		return true;
+	sort(nums.begin(), nums.end());
+	return judgePartition(nums, total / 2, 0);
+}
+
+方法2：这是个典型的背包问题，对于每个元素有选择和不选两种，dp[i][j]代表0~i-1范围内找到j的值可能性
+当选择i时，找dp[i-1][j-nums[i]]是否为true
+当不选择i时，找dp[i-1][j]是否为true
+初始化，dp[i][0]均为true，对于第一个字符，如果nums[0] < target,那么dp[0][nums[0]]=true
+bool canPartition(vector<int>& nums) {
+	bool res = false;
+	int total = 0;
+	for (int& num : nums)
+		total += num;
+	if (total % 2 == 1)
+		return  false;
+	if (total == 0)
+		return true;
+	int target = total / 2;
+	vector<vector<bool>>dp(nums.size(), vector<bool>(target + 1, false));
+	if (nums[0] < target)
+		dp[0][nums[0]] = true;
+	for (int i = 1; i < nums.size(); i++)
+	{
+		for (int j = 0; j <= target; j++)
+		{
+			if (nums[i] == j)
+			{
+				dp[i][j] = true;
+				continue;
+			}
+			if (nums[i] < j)
+			{
+				dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];
+			}
+		}
+	}
+	return dp[nums.size() - 1][target];
+}
