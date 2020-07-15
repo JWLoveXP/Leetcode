@@ -1,0 +1,78 @@
+写一个程序，输出从 1 到 n 数字的字符串表示。
+
+1. 如果 n 是3的倍数，输出“Fizz”；
+2. 如果 n 是5的倍数，输出“Buzz”；
+3.如果 n 同时是3和5的倍数，输出 “FizzBuzz”
+
+方法：暴力法，遍历所有的可能
+
+vector<string> fizzBuzz(int n) {
+	vector<string>res;
+	for (int i = 1; i <= n; i++)
+	{
+		if (i % 3 == 0 && i % 5 == 0)
+			res.push_back("FizzBuzz");
+		else if (i % 3 == 0)
+			res.push_back("Fizz");
+		else if (i % 5 == 0)
+			res.push_back("Buzz");
+		else
+			res.push_back(to_string(i));
+	}
+	return res;
+}
+
+方法2：拼接，可以发现数字是3和5的倍数，其结果就是3的输出和5的输出的拼接，所有可以依次判断
+vector<string> fizzBuzz(int n) {
+	vector<string>res;
+	string r;
+	for (int i = 1; i <= n; i++)
+	{
+		r = "";
+		if (i % 3 == 0)
+			r += "Fizz";
+		if (i % 5 == 0)
+			r += "Buzz";
+		if (r.empty())
+			r = to_string(i);
+		res.push_back(r);
+	}
+	return res;
+}
+方法3：优化数字字符串，每次不在重新生成数字字符串，而是在原来的基础上添加
+vector<string> fizzBuzz(int n) {
+	string r = "0";
+	int pos, flag, len;
+	for (int i = 1; i <= n; i++)
+	{
+		
+		flag = 1;
+		len = r.size();
+		pos = len-1;
+		while (flag != 0 && pos >= 0)
+		{
+			if (r[pos] < '9')
+			{
+				r[pos]++;
+				flag = 0;
+			}
+			else
+			{
+				r[pos] = '0';
+				pos--;
+			}
+		}
+		if (pos == -1)
+			r = "1" + r;
+		if (i % 3 == 0 && i % 5 == 0)
+			res.push_back("FizzBuzz");
+		else if (i % 3 == 0)
+			res.push_back("Fizz");
+		else if (i % 5 == 0)
+			res.push_back("Buzz");
+		else
+			res.push_back(r);
+	}
+	return res;
+
+}
