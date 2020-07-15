@@ -1,0 +1,57 @@
+给定一个非空数组，返回此数组中第三大的数。如果不存在，则返回数组中最大的数。要求算法时间复杂度必须是O(n)
+方法：设置三个循环分别计算第一，第二，第三大的数
+时间复杂度O(N)，空间复杂度O(1)
+int thirdMax(vector<int>& nums) {
+	int first = nums[0];
+	for (int& num : nums)
+	{
+		if (first < num)
+			first = num;
+	}
+	int second = -2147483648;
+	for (int& num : nums)
+	{
+		if (second < num && num < first)
+			second = num;
+	}
+	int third = -2147483648;
+	int flag = 0;
+	for (int& num : nums)
+	{
+		if (third <= num && num < second)
+		{
+			flag = 1;//标志位
+			third = num;
+		}
+	}
+	return flag == 1 ? third : first;
+  }
+ 
+方法2：插入排序的思想，遇到相同的数字跳过，当遇到大的值就交换，当数组数量小于3时就插入
+int thirdMax(vector<int>& nums) {
+    vector<int> ans;
+    for (auto n : nums) {
+        bool bSame = false;
+        for (auto a : ans) {
+            if (n == a) {
+                bSame = true;
+                break;
+            }
+        }
+        if (bSame) continue;
+
+        for (int i = 0; i < ans.size(); i++) {
+            if (n > ans[i]) {
+                swap(n, ans[i]);
+            }
+        }
+
+        if (ans.size() < 3) {
+            ans.push_back(n);
+        }
+    }
+
+    if (ans.empty()) return 0;
+    if (ans.size() < 3) return ans.front();
+    return ans.back();
+}
