@@ -1,0 +1,77 @@
+给定一个 m x n 的非负整数矩阵来表示一片大陆上各个单元格的高度。“太平洋”处于大陆的左边界和上边界，而“大西洋”处于大陆的右边界和下边界。
+
+规定水流只能按照上、下、左、右四个方向流动，且只能从高到低或者在同等高度上流动。
+
+请找出那些水流既可以流动到“太平洋”，又能流动到“大西洋”的陆地单元的坐标。
+
+ 
+
+提示：
+
+    输出坐标的顺序不重要
+    m 和 n 都小于150
+
+ 
+
+示例：
+
+ 
+
+给定下面的 5x5 矩阵:
+
+  太平洋 ~   ~   ~   ~   ~ 
+       ~  1   2   2   3  (5) *
+       ~  3   2   3  (4) (4) *
+       ~  2   4  (5)  3   1  *
+       ~ (6) (7)  1   4   5  *
+       ~ (5)  1   1   2   4  *
+          *   *   *   *   * 大西洋
+
+返回:
+
+[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] (上图中带括号的单元).
+
+方法：深度优先遍历，对于能流进太平洋的必然要经过太平洋边界，对于能流进大西洋的必然会流过大西洋边界，那么分别从这两个边界出发，找到能流经他们的路径，相应节点标记，最后两个都有标记的节点就是所需节点
+class Solution {
+public:
+    vector<pair<int,int>> direction = {{1,0},{-1,0},{0,-1},{0,1}};
+    int m,n;
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& matrix) {
+
+        if (matrix.empty() || matrix[0].empty()) return {};
+        m = matrix.size();
+        n = matrix[0].size();
+        vector<vector<int>> ret;
+        vector<vector<int>> Mask_d(m,vector<int>(n));
+        vector<vector<int>> Mask_t(m,vector<int>(n));
+
+        //先遍历上边界与下边界
+        for(int j = 0;j < n;j++){
+            dfs(matrix,0,j,INT_MIN,Mask_t);
+            dfs(matrix,m-1,j,INT_MIN,Mask_d);
+        }
+        
+        //遍历左边界 与 右边界
+        for(int i = 0;i < m;i++){
+            dfs(matrix,i,0,INT_MIN,Mask_t);
+            dfs(matrix,i,n-1,INT_MIN,Mask_d);
+        }
+
+        //然后就是合并两个标志数组，取得共同的节点；
+        for(int i = 0;i < m;i++)
+            for(int j = 0;j < n;j++){
+                if(Mask_t[i][j] && Mask_d[i][j]){
+                    ret.push_back({i,j});
+                }
+            }
+        return ret;
+    }
+    
+    void dfs(vector<vector<int>>& matrix,int i,int j,int h,vector<vector<int>>& Mask){
+        if(i < 0 || i >= m || j < 0 || j >= n) return ;
+        if(Mask[i][j] || matrix[i][j] < h) return;
+        Mask[i][j] = 1;
+        for(auto ele:direction)
+            dfs(matrix,i+ele.first,j+ele.second,matrix[i][j],Mask);       
+    }
+};
