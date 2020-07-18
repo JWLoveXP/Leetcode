@@ -1,0 +1,46 @@
+给定一个非空字符串，其中包含字母顺序打乱的英文单词表示的数字0-9。按升序输出原始的数字。
+
+注意:
+
+    输入只包含小写英文字母。
+    输入保证合法并可以转换为原始的数字，这意味着像 "abc" 或 "zerone" 的输入是不允许的。
+    输入字符串的长度小于 50,000。
+
+示例 1:
+
+输入: "owoztneoer"
+
+输出: "012" (zeroonetwo)
+
+
+方法：有些单词有维一的字符映射，比如eight->g，找到映射后可以可以通过字符的映射找到对应的数量
+    string originalDigits(string s) {
+	vector<int>count(26, 0);
+	for (char& c : s)
+		count[c - 'a']++;
+	vector<int>out(10, 0);
+	//按照一定顺序，数字中的某个字母可以唯一映射数字
+	//唯一字符
+	out[0] = count['z' - 'a'];
+	out[2] = count['w' - 'a'];
+	out[4] = count['u' - 'a'];
+	out[6] = count['x' - 'a'];
+	out[8] = count['g' - 'a'];
+	//唯二字符
+	out[3] = count['h' - 'a'] - out[8];
+	out[7] = count['s' - 'a'] - out[6];
+	out[5] = count['f' - 'a'] - out[4];
+	
+	out[9] = count['i' - 'a'] - out[5] - out[6] - out[8];
+	out[1] = count['o' - 'a'] - out[0] - out[2] - out[4];
+	
+	char num = '0';
+	string res = "";
+	for (int n: out)
+	{
+		for (int i = 0; i < n; i++)
+			res += num;
+		num++;
+	}
+	return res;
+    }
