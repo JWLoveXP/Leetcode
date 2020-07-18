@@ -1,0 +1,68 @@
+给定一个非空数组，数组中元素为 a0, a1, a2, … , an-1，其中 0 ≤ ai < 231 。
+
+找到 ai 和aj 最大的异或 (XOR) 运算结果，其中0 ≤ i,  j < n 。
+
+你能在O(n)的时间解决这个问题吗？
+
+示例:
+
+输入: [3, 10, 5, 25, 2, 8]
+
+输出: 28
+
+解释: 最大的结果是 5 ^ 25 = 28.
+方法：遍历一遍所有数字，由于一个数字最多32位，构建前缀树。构建完前缀树后，对于每个数，找异或结果最大的数字，比如对于第i为为0的数，如果第i为的前缀树中有1，那么选择1的那个前缀树节点
+
+时间复杂度O(N)，空间复杂度O(N)
+class Solution {
+public:
+struct TreeNode
+{
+	TreeNode* next[2];
+	TreeNode()
+	{
+		memset(next, 0, sizeof(next));
+	}
+};
+int findMaximumXOR(vector<int>& nums) {
+	TreeNode* root = new TreeNode();
+	TreeNode* node;
+	int i, bit;
+	for (int& num : nums)
+	{
+		node = root;
+		for (i = 30; i >= 0; i--)
+		{
+			bit = num >> i & 1;
+			if (node->next[bit] == NULL)
+				node->next[bit] = new TreeNode();
+			node = node->next[bit];
+		}
+	}
+	int maxval = 0;
+	int res;
+	for (int& num : nums)
+	{
+		res = 0;
+		node = root;
+		for (i = 30; i >= 0; i--)
+		{
+			bit = num >> i & 1;
+			if (bit == 1)
+			{
+				res += node->next[0] != NULL ? 1 << i : 0;
+				node = node->next[0] != NULL ? node->next[0] : node->next[1];
+			}
+			else
+			{
+				res += node->next[1] != NULL ? 1 << i : 0;
+				node = node->next[1] != NULL ? node->next[1] : node->next[0];
+			}
+			
+		}
+		if (res > maxval)
+			maxval = res;
+	}
+	return maxval;
+
+}
