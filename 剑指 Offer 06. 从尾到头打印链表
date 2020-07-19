@@ -1,0 +1,20 @@
+输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）
+
+方法：先遍历链表，将值加入数组，在反转数组即可
+时间复杂度O(N)，空间复杂度O(1)
+
+struct ListNode {
+	int val;
+	ListNode *next;
+	ListNode(int x) : val(x), next(NULL) {}
+};
+vector<int> reversePrint(ListNode* head) {
+	vector<int>res;
+	while (head)
+	{
+		res.push_back(head->val);
+		head = head->next;
+	}
+	reverse(res.begin(), res.end());
+	return res;
+}
