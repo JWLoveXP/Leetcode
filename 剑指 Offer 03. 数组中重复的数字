@@ -1,0 +1,43 @@
+找出数组中重复的数字。
+
+
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。
+
+示例 1：
+
+输入：
+[2, 3, 1, 0, 2, 5, 3]
+输出：2 或 3 
+
+方法1：建立一个数字存放n个数字，索引对应数字，然后从左到右把数字放到数组中，当数组中已经有数字则找到重复数字
+时间复杂度O(N),空间复杂度O(N)
+int findRepeatNumber(vector<int>& nums) {
+	int n = nums.size();
+	vector<int>dict(n, 0);
+	for (int& num : nums)
+	{
+		if (dict[num] == 0)
+			dict[num]++;
+		else
+			return num;
+	}
+	return n - 1;
+}
+
+方法2：如果nums数组中的第i个数字和i不相同，则同nums[i]交换直到nums[i] == i， 如果遍历过程中发现nums[nums[i]] == nums[i]，则说明找到了重复数字
+时间复杂度O(N),空间复杂度O(1)
+int findRepeatNumber(vector<int>& nums) {
+	int n = nums.size();
+	for (int i = 0; i < n; i++)
+	{
+		while (nums[i] != i)
+		{
+			if (nums[nums[i]] == nums[i])
+				return nums[i];
+			else
+				swap(nums[i], nums[nums[i]]);
+		}
+	
+	}
+	return n - 1;
+}
