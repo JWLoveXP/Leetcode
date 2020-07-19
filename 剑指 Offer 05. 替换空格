@@ -1,0 +1,22 @@
+请实现一个函数，把字符串 s 中的每个空格替换成"%20"。
+
+ 
+
+示例 1：
+
+输入：s = "We are happy."
+输出："We%20are%20happy."
+
+方法：遍历字符串，遇到空格使用"%20"填充，否则使用原字符填充
+string replaceSpace(string s) {
+	string res = "";
+	string r = "%20";
+	for (char c : s)
+	{
+		if (c == ' ')
+			res += r;
+		else
+			res += c;
+	}
+	return res;
+}
