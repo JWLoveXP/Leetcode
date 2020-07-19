@@ -18,6 +18,7 @@
 从右上角出发，matrix[i][j] == target，说明找到目标
             matrix[i][j] < target，需要向下移动
             matrix[i][j] > target，需要向左移动
+时间复杂度O(N+M), 空间复杂度O(1)
 bool findNumberIn2DArray(vector<vector<int>>& matrix, int target) {
 	if (matrix.empty() || matrix[0].empty())
 		return false;
