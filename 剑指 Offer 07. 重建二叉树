@@ -1,0 +1,46 @@
+输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+
+ 
+
+例如，给出
+
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+
+方法：前序遍历为根->左->右，中序遍历为左->根->右，根据前序遍历可以知道开始的节点，找到中序遍历中的节点对应的位置，就可以知道左子树的数量，从而可以知道其在前序遍历中位置范围，同里可以找到
+右子树的范围，从而可以将这个问题转化成分治问题
+值得注意的是必须节点唯一才能建唯一树，不然可能有多个结果
+时间复杂度O(N)，空间复杂度O(N)
+TreeNode* build(vector<int>& preorder, vector<int>& inorder, unordered_map<int, int>&dict, int prestart, int preend, int instart, int inend)
+{
+	if (prestart > preend)//序号超过的情况
+		return NULL;
+	if (prestart == preend)//只有一个的情况
+		return new TreeNode(preorder[prestart]);
+	TreeNode* root = new TreeNode(preorder[prestart]);
+	int index = dict[preorder[prestart]];//起点在中序遍历中的位置
+	TreeNode* left = build(preorder, inorder, dict, prestart+1, prestart + index-instart, instart, index - 1);//前序遍历左半边的end = 起点 + 中序遍历中左半边数量
+	TreeNode* right = build(preorder, inorder, dict, prestart + index - instart + 1, preend, index + 1, inend);//前序遍历右半边的end = 起点 + 中序遍历中左半边数量 + 1
+	root->left = left;
+	root->right = right;
+	return root;
+
+}
+TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+	if (preorder.empty())
+		return NULL;
+	unordered_map<int, int>dict;
+	int n = inorder.size();
+	for (int i = 0; i < n; i++)
+		dict[inorder[i]] = i;
+	TreeNode* a = build(preorder, inorder, dict, 0, n - 1, 0, n - 1);
+	return a;
+}
