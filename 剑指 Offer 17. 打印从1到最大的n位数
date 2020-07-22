@@ -4,8 +4,7 @@
 
 输入: n = 1
 输出: [1,2,3,4,5,6,7,8,9]
-方法：数字的上限是pow(10, n) - 1，唯一需要注意的是num超过int的最大值，所以需要先额外判断一下
-
+方法：因为有int类型的限制，数字的上限是pow(10, n) - 1，唯一需要注意的是num超过int的最大值，所以需要先额外判断一下
 vector<int> printNumbers(int n) {
 	if (n <= 0)
 		return vector<int>();
@@ -17,3 +16,5 @@ vector<int> printNumbers(int n) {
 		res.push_back(i);
 	return res;
 }
+
+方法2：如果没用int类型限制，那么久需要使用string类型来表示数字，此时需要构建n位数的全排列，使用深度优先搜索，对于第一位从1出发，因为初始不能是0，对于后面的位，从0出发
