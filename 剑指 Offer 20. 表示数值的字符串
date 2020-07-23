@@ -1,0 +1,73 @@
+请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串"+100"、"5e2"、"-123"、"3.1416"、"0123"都表示数值，但"12e"、"1a3.14"、"1.2.3"、"+-5"、"-1E-16"及"12e+5.4"都不是
+
+
+bool judgeFirst(string& s)
+{
+	//判断e前一部分是否为数字
+	bool result = false;
+	bool point = false;
+	int len = s.size();
+	for (int i = 0; i < len; i++)
+	{
+		if (s[i] == '+' || s[i] == '-')
+		{
+			if (i != 0)
+				return false;
+		}
+		else if (s[i] == '.')
+		{
+			if (point) // 多个小数点
+				return false;
+			point = true;
+		}
+		else if (s[i] < '0' || s[i] > '9')
+			return false;
+		else
+			result = true; //当存在数字时才为true，排除了如”+.“这类情况
+	}
+	return result;
+}
+bool judgeSecond(string& s){
+	if ((s[0] == '+' || s[0] == '-') && s.size() == 1) //排除只有一个符号的情况
+		return false;
+	int i = 0;
+	if (s[i] == '+' || s[i] == '-')
+		i++;
+	int n = s.size();
+	while (i < n)
+	{
+		if (s[i] >= '0' && s[i] <= '9') //e后面除了第一个符号可以是+或-。其余必须是数字
+			i++;
+		else
+			return false;
+	}
+	return true;
+}
+bool isNumber(string s)
+{
+	if (s.empty())
+		return false;
+	int n = s.size();
+	int i = 0, j = n -1;
+	while (i < n && s[i] == ' ')
+		i++;
+	while (j >= 0 && s[j] == ' ')
+		j--;
+	s = s.substr(i, j - i + 1);
+	n = j - i + 1;
+	for (i = 0; i < n; i++)
+	{
+		if (s[i] == 'e')
+			break;
+	}
+	if (i == 0 || i == n - 1) //e出现在最开始或者最后的情况
+		return false;
+	if (i < n)
+	{
+		string left = s.substr(0, i);
+		string right = s.substr(i + 1);
+		return judgeFirst(left) && judgeSecond(right);
+	}
+	else
+		return judgeFirst(s);
+}
