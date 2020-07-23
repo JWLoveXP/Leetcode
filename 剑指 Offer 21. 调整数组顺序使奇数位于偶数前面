@@ -1,0 +1,24 @@
+输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。
+
+
+方法：快慢指针，慢指针指向第一个偶数，当快指针指向奇数时，两个值交换，慢指针加1
+时间复杂度O(N)，空间复杂度O(1)
+vector<int> exchange(vector<int>& nums) {
+	int n = nums.size();
+	if (n == 0)
+		return nums;
+	int slow = 0, fast = 0;
+	int temp;
+	while (fast < n)
+	{
+		if (nums[fast] & 1)
+		{
+			temp = nums[slow];
+			nums[slow] = nums[fast];
+			nums[fast] = temp;
+			slow++;
+		}
+		fast++;
+	}
+	return nums;
+    }
