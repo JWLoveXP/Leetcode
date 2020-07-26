@@ -1,0 +1,52 @@
+请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+    1
+   / \
+  2   2
+   \   \
+   3    3
+
+ 
+
+示例 1：
+
+输入：root = [1,2,2,3,4,4,3]
+输出：true
+
+方法：使用队列，改变存储方式，假设两个节点A，B，那么对称需要判断A->left == B->right和A->right == B->left，因此，存放的顺序依次是A->left，B->right，A->right，B->left
+bool isSymmetric(TreeNode* root) {
+	if (!root)
+		return true;
+	queue<TreeNode*>q;
+	q.push(root->left);
+	q.push(root->right);
+	TreeNode *left, *right;
+	while (!q.empty())
+	{
+		left = q.front();
+		q.pop();
+		right = q.front();
+		q.pop();
+		if (left == NULL && right == NULL)
+			continue;
+		else if (left != NULL && right != NULL && left->val == right->val)
+		{
+			q.push(left->left);
+			q.push(right->right);
+			q.push(left->right);
+			q.push(right->left);
+		}
+		else
+			return false;
+	}
+	return true;
+}
