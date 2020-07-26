@@ -1,0 +1,44 @@
+请实现一个函数按照之字形顺序打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右到左的顺序打印，第三行再按照从左到右的顺序打印，其他行以此类推
+
+方法：使用两个栈，一个栈first存储从左到右的节点，一个栈second存放从右到左的节点，当first中有节点时，说明下一层是从右到左的，根据栈的特征，先放左节点再放右节点，
+当second中有节点时，说明下一层是从左到右的，根据栈的特征，先放右节点再放左节点，
+vector<vector<int>> levelOrder(TreeNode* root) {
+	vector<vector<int>>res;
+	if (!root)
+		return res;
+	stack<TreeNode*>first, second;
+	first.push(root);
+	TreeNode* temp;
+	while (!first.empty() || !second.empty())
+	{
+		vector<int>r;
+		if (!first.empty())
+		{
+			while (!first.empty())
+			{
+				temp = first.top();
+				first.pop();
+				r.push_back(temp->val);
+				if (temp->left)
+					second.push(temp->left);
+				if (temp->right)
+					second.push(temp->right);
+			}
+		}
+		else
+		{
+			while (!second.empty())
+			{
+				temp = second.top();
+				second.pop();
+				r.push_back(temp->val);
+				if (temp->right)
+					first.push(temp->right);
+				if (temp->left)
+					first.push(temp->left);
+			}
+		}
+		res.push_back(r);
+	}
+	return res;
+}
