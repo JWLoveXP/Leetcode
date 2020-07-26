@@ -1,0 +1,24 @@
+输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如，
+序列 {1,2,3,4,5} 是某栈的压栈序列，序列 {4,5,3,2,1} 是该压栈序列对应的一个弹出序列，但 {4,3,5,1,2} 就不可能是该压栈序列的弹出序列。
+
+
+方法：模拟入栈和出栈，首先把元素压入栈，如果栈顶元素等于弹出顺序当前指针j指向的元素，那么弹出并且j++，在比较栈顶元素j指向的元素,直到不相等或者栈为空，当压入完后，如果j未指向末尾，那么则为false
+时间复杂度O(N)，空间复杂度O()
+bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
+	int n = pushed.size();
+	if (n != popped.size())
+		return false;
+	stack<int>st;
+	int first = 0, second = 0;
+	while (first < n)
+	{
+        st.push(pushed[first++]);
+		while (!st.empty() && st.top() == popped[second])
+		{
+			st.pop();
+			second++;
+		}
+		
+	}
+	return second == n;
+}
