@@ -1,0 +1,31 @@
+定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。
+方法：维护两个栈，一个栈st1存放元素，一个栈st2存放最小值，当push一个新的值时，该值小于栈st2栈顶的元素，那么加入栈，pop时，如果st1栈顶等于st2栈顶时，则st2栈顶也出栈
+class MinStack {
+public:
+	/** initialize your data structure here. */
+	stack<int>st1;//存放元素
+	stack<int>st2;//存放最小值
+	MinStack() {
+
+	}
+
+	void push(int x) {
+		st1.push(x);
+		if (st2.empty() || x <= st2.top())
+			st2.push(x);
+	}
+
+	void pop() {
+		if (st1.top() == st2.top())
+			st2.pop();
+		st1.pop();
+	}
+
+	int top() {
+		return st1.top();
+	}
+
+	int min() {
+		return st2.top();
+	}
+};
