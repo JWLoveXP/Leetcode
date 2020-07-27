@@ -1,0 +1,24 @@
+输入一个整型数组，数组里有正数也有负数。数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值
+要求时间复杂度为O(n)
+
+方法：动态规划，dp[i]代表以第i个数字结尾的最大子数组和，那么对于dp[i+1]，如果dp[i]>0，则对于i+1结尾的子数组是有益的，dp[i+1] = dp[i] + nums[i+1]，
+dp[i] < 0，那么前面的无益，所以dp[i+1] = nums[i+1]，由于dp[i+1]只和dp[i]有关，所以可以不使用额外额外空间数组
+时间复杂度O(n),空间复杂度O(1)
+int maxSubArray(vector<int>& nums)
+{
+	int n = nums.size();
+	if (n == 0)
+		return 0;
+	int dp = nums[0];
+	int maxval = nums[0];
+	for (int i = 1; i < n; i++)
+	{
+		if (dp > 0)
+			dp += nums[i];
+		else
+			dp = nums[i];
+		if (dp > maxval)
+			maxval = dp; 
+	}
+	return maxval;
+}
