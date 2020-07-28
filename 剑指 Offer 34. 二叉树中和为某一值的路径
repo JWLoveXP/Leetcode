@@ -1,0 +1,25 @@
+输入一棵二叉树和一个整数，打印出二叉树中节点值的和为输入整数的所有路径。从树的根节点开始往下一直到叶节点所经过的节点形成一条路径
+
+方法：深度优先遍历
+void findPath(TreeNode* root, int sum, int curSum, vector<vector<int>>& r, vector<int>&temp)
+{
+	curSum += root->val;
+	temp.push_back(root->val);
+
+	if (!root->left && !root->right && curSum == sum)
+		r.push_back(temp);
+	if (root->left)
+		findPath(root->left, sum, curSum, r, temp);
+	if (root->right)
+		findPath(root->right, sum, curSum, r, temp);
+	temp.pop_back();
+}
+vector<vector<int>> pathSum(TreeNode* root, int sum) {
+	vector<vector<int>> r;
+	if (!root)
+		return r;
+	vector<int>temp; 
+	findPath(root, sum, 0, r, temp);
+	return r;
+	
+}
