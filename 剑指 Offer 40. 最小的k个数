@@ -1,0 +1,35 @@
+输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4
+
+
+方法：排序
+时间复杂度O(NlogN)，空间复杂度O(1)
+
+方法2：维护一个只有k个值的最大堆，当有一个新元素，大于栈顶，那么栈顶出栈，该元素加入堆，否则就跳过，最终堆中就是最小的k个数
+插入为log(k),一共n个元素，所以时间复杂度时间复杂度O(Nlogk)，空间复杂度O(k)
+使用C++中的优先队列，默认为大顶堆
+	vector<int>res;
+	if (k == 0)
+		return res;
+	priority_queue<int>q;
+	int i;
+	for (i = 0; i < k;i++)
+		q.push(arr[i]);
+	int n = arr.size();
+	for (i = k; i < n; i++)
+	{
+		if (q.top() > arr[i])
+		{
+			q.pop();
+			q.push(arr[i]);
+		}
+	}
+	
+	for (int i = 0; i < k; i++)
+	{
+		res.push_back(q.top());
+		q.pop();
+	}
+	return res;
+    }
+    
+    方法3:快速选择，选择前k个元素
