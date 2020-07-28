@@ -1,0 +1,54 @@
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
+
+方法1：递归+分治，更加二叉搜索树的特点，将数组分成两部分
+时间复杂度O(N^2), 空间复杂度O（N）
+bool judgePostorder(vector<int>& postorder, int start, int end)
+{
+	if (start >= end)
+		return true;
+	int pos, i;
+	int val = postorder[end];
+	for (i = start; i < end; i++)
+	{
+		if (postorder[i] <= val)
+			continue;
+		else
+		{
+			pos = i;
+			break;
+		}
+	}
+	for (; i < end; i++)
+	{
+		if (postorder[i] > val)
+			continue;
+		else
+			return false;
+	}
+	return judgePostorder(postorder, start, i - 1) && judgePostorder(postorder, i, end - 1);
+}
+bool verifyPostorder(vector<int>& postorder) {
+	
+	return judgePostorder(postorder, 0, postorder.size() - 1);
+}
+
+方法2：单调栈，倒序遍历，root为大于postorder[i]的最小的元素，相当于是根节点，那么如果一个元素大于根节点，则错误，如果小于，则需要更新当前的root，使其是最小的大于元素的值，并将元素入栈，
+主要前提是假设树是root=INT_MAX的左子树，使得最初的节点满足条件
+时间复杂度O(N),空间复杂度O(N)
+bool verifyPostorder(vector<int>& postorder) {
+	
+		stack<int>st;
+	int root = INT_MAX;
+	for (int i = postorder.size() - 1; i >= 0; i--)
+	{
+		if (root < postorder[i])
+			return false;
+		while (!st.empty() && st.top()>postorder[i])
+		{
+			root = st.top();
+			st.pop();
+		}
+		st.push(postorder[i]);
+	}
+	return true;
+}
