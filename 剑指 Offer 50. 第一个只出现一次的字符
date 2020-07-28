@@ -1,0 +1,27 @@
+在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母
+
+方法：使用哈希表记录字符是否出现多次，第二次遍历时就可得到第一个只出现一次的字符
+char firstUniqChar(string s) {
+	char c = ' ';
+	if (s.empty())
+		return c;
+	int n = s.size();
+	unordered_map<char, bool>dict;
+	int i; 
+	for (i = 0; i < n;i++)
+	{
+		if (dict.count(s[i]) == 0)
+			dict[s[i]] = true;
+		else
+			dict[s[i]] = false;
+	}
+	for (i = 0; i < n; i++)
+	{
+		if (dict[s[i]])
+		{
+			c = s[i];
+			break;
+		}
+	}
+	return c;
+    }
