@@ -1,0 +1,37 @@
+输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个
+
+示例 1:
+
+输入: [10,2]
+输出: "102"
+
+示例 2:
+
+输入: [3,30,34,5,9]
+输出: "3033459"
+
+方法：排序问题，判断a+b 和 b+a 的大小
+时间复杂度O(NlogN)，空间复杂度O（1）
+
+class Solution {
+public:
+static bool cmp(string& a, string& b)
+{
+	if (a + b < b + a)
+		return true;
+	else
+		return false;
+
+}
+string minNumber(vector<int>& nums) {
+
+	vector<string>s;
+	for (int& i : nums)
+		s.push_back(to_string(i));
+	sort(s.begin(), s.end(), cmp);
+	string res = "";
+	for (string& ss : s)
+		res += ss;
+	return res;
+}
+};
