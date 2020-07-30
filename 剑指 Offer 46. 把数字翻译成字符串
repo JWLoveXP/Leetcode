@@ -1,0 +1,39 @@
+给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。一个数字可能有多个翻译。
+请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+
+ 
+
+示例 1:
+
+输入: 12258
+输出: 5
+解释: 12258有5种不同的翻译，分别是"bccfi", "bwfi", "bczi", "mcfi"和"mzi"
+
+
+方法：动态规划，dp[i]表示以i结尾的可能，当以一个字符结尾，dp[i] += dp[i-1]，如果i-1和i字符组成的数字在0-25，那么还能组成另一个可能，此时dp[i] += dp[i-2]，由于dp[i]只和dp[i-1]、dp[i-2]
+有关，因此可以不用申请数组
+时间复杂度O(N)，O（1）
+int translateNum(int num) {
+	string s = to_string(num);
+	unordered_set<string>dict;
+	int i;
+	for (i = 0; i < 26; i++)
+		dict.insert(to_string(i));
+	int first = 1;
+	int second = 1;
+	int res = 1;
+	int n = s.size();
+	string temp;
+	for (i = 1; i < n; i++)
+	{
+		temp = "";
+		res = second;
+		temp += s[i - 1];
+		temp += s[i];
+		if (dict.count(temp))
+			res += first;
+		first = second;
+		second = res;
+	}
+	return res;
+}
