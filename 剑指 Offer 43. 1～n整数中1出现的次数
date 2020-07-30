@@ -1,0 +1,25 @@
+输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次
+
+方法：对于数字，先判断最高位，如果大于1，如2123，则最高位的1为1000，如1234，则为234，然后判断四位数中剩余的数字，注意该部分1出现的次数还和高位的数字有关，如2123，那么得为2*f(123),最后判断三位数
+即f(999)，因此最终由这三部分组成
+
+int countDigitOne(int n) {
+	if (n <= 0)
+		return 0;
+	int count = 0;
+	int hight = n;
+	int cnt = 1;
+
+	while (hight >= 10)
+	{
+		cnt *= 10;
+		hight /= 10;
+	}
+	int last = n - hight*cnt;
+	if (hight > 1)
+		count += cnt;
+	else
+		count += last + 1;
+	return count + hight * countDigitOne(cnt - 1) + countDigitOne(last);
+}
