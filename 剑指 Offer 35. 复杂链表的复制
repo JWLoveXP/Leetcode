@@ -1,0 +1,39 @@
+请实现 copyRandomList 函数，复制一个复杂链表。在复杂链表中，每个节点除了有一个 next 指针指向下一个节点，还有一个 random 指针指向链表中的任意节点或者 null
+
+方法：在每个节点后添加一个相同节点，然后根据原节点找到random节点
+    Node* copyRandomList(Node* head) {
+	if (!head)
+		return head;
+	Node* p = head;
+	//next节点的添加
+	while (p)
+	{
+		Node* temp = new Node(p->val);
+		temp->next = p->next;
+		p->next = temp;
+		p = temp->next;
+	}
+	//random节点添加
+	p = head;
+	Node* q;
+	while (p)
+	{
+		q = p->next;
+		if (p->random)
+			q->random = p->random->next;
+		p = q->next;
+	}
+	//节点分离
+	Node* copyhead = head->next;
+	p = head;
+	q = p->next;
+	while (p->next && p->next->next)
+	{
+		p->next = q->next;
+		p = p->next;
+		q->next = p->next;
+		q = q->next;
+	}
+	p->next = NULL;
+	return copyhead;
+    }
