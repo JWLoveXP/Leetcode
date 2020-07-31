@@ -1,0 +1,47 @@
+统计一个数字在排序数组中出现的次数
+
+
+方法：二分法，寻找左右边界，
+对于左边界：nums[mid] > target，right = mid - 1；nums[mid] < target，left = mid + 1，而当相等时，right--；找到左边界后，判断是否有目标值，如果有，则判断右边界，此时left从leftpos开始，
+也就是从刚才找到的左边界开始
+时间复杂度O(N)，空间复杂度O(1)
+
+int search(vector<int>& nums, int target) {
+	int n = nums.size();
+	if (n == 0)
+		return 0;
+	int left = 0;
+	int right = n - 1;
+	int mid, leftpos, rightpos;
+	//寻找左边的位置
+	while (left <= right)
+	{
+		mid = left + (right - left) / 2;
+		if (nums[mid] > target)
+			right = mid - 1;
+		else if (nums[mid] < target)
+			left = mid + 1;
+		else
+			right--;
+	}
+	leftpos = left;
+	//判断是否有目标元素
+	if (leftpos < n && nums[leftpos] != target)
+		return 0;
+	//寻找右边的位置
+	left = leftpos;//不用从头开始
+	right = n - 1;
+	while (left <= right)
+	{
+		mid = left + (right - left) / 2;
+		if (nums[mid] > target)
+			right = mid - 1;
+		else if (nums[mid] < target)
+			left = mid + 1;
+		else
+			left++;
+	}
+	rightpos = right;
+	int res = (rightpos - leftpos + 1) > 0 ? (rightpos - leftpos + 1) : 0;
+	return res;
+    }
