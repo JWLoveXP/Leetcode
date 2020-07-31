@@ -1,0 +1,19 @@
+一个长度为n-1的递增排序数组中的所有数字都是唯一的，并且每个数字都在范围0～n-1之内。在范围0～n-1内的n个数字中有且只有一个数字不在该数组中，请找出这个数字。
+
+
+方法：二分，nums[mid] == mid，说明左边都是没有缺省的，数字在右边[mid+1, right]中，如果nums[mid] ！= mid,说明右边有缺省，数字在[left, mid-1]中
+时间复杂度O(log2N)，空间复杂度O(1)
+int missingNumber(vector<int>& nums) {
+	int right = nums.size() - 1;
+	int left = 0;
+	int mid;
+	while (left <= right)
+	{
+		mid = left + (right - left) / 2;
+		if (nums[mid] == mid)
+			left = mid + 1;
+		else
+			right = mid - 1;
+	}
+	return left;
+}
