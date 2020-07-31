@@ -1,0 +1,29 @@
+我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数
+
+方法：多指针法，每个数字都会有乘2，3，5的机会，指针 2、3 和 5 分别指向对应的数，初始化都指向1，每次选择最小的乘积最小的数，然后对应指针指向后面一个数
+
+时间复杂度O(N),空间复杂度O(1)
+
+int nthUglyNumber(int n) {
+	vector<int>dp(n, 0);
+	dp[0] = 1;
+	int two = 0;
+	int three = 0;
+	int five = 0;
+	for (int i = 1; i < n; i++)
+	{
+		if (2 * dp[two] <= 3 * dp[three] && 2 * dp[two] <= 5 * dp[five])
+			dp[i] = 2 * dp[two++];
+		else if (3 * dp[three] <= 2 * dp[two] && 3 * dp[three] <= 5 * dp[five])
+			dp[i] = 3 * dp[three++];
+		else 
+			dp[i] = 5 * dp[five++];
+		if (2 * dp[two] == dp[i])
+			two++;
+		if (3 * dp[three] == dp[i])
+			three++;
+		if (5 * dp[five] == dp[i])
+			five++;
+	}
+	return dp[n - 1];
+}
