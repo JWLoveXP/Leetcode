@@ -1,0 +1,62 @@
+请实现两个函数，分别用来序列化和反序列化二叉树。
+请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构
+
+方法：对于序列化，采用层序遍历的方式，如果子节点为null，则字符串中加入'#'，不是，则加入值，并用','隔开，对于每个叶子节点，其子节点都为NULL
+对于反序列化，先将字符分隔开后，转化成树节点，然后再将他们连接起来，使用快慢指针，i指向根节点，j指向孩子节点，当i不是空节点时，将i的孩子节点指向j，当i为空时，不进行处理
+
+class Codec {
+public:
+
+	// Encodes a tree to a single string.
+	string serialize(TreeNode* root) {
+		string s = "";
+		queue<TreeNode*>q;
+		q.push(root);
+		TreeNode* temp;
+		int n;
+		while (!q.empty())
+		{
+			temp = q.front();
+			q.pop();
+			if (temp == NULL)
+				s += "#,";
+			else
+			{
+				s += to_string(temp->val);
+				s += ',';
+				q.push(temp->left);
+				q.push(temp->right);
+			}
+		}
+		cout << s<<endl;
+		return s;
+
+	}
+	// Decodes your encoded data to tree.
+	TreeNode* deserialize(string data) {
+		istringstream ss(data);
+		string temp;
+		vector<TreeNode*> s;
+		while (getline(ss, temp, ','))
+		{
+			if (temp == "#")
+				s.push_back(NULL);
+			else
+				s.push_back(new TreeNode(stoi(temp)));
+			
+			
+		}
+		int n = s.size();
+		int j = 1; //左右子节点下标
+		for (int i = 0; i < n; i++)
+		{
+			if (s[i]) //非空节点
+			{
+				s[i]->left = s[j++];
+				s[i]->right = s[j++];
+			}
+		}
+		return s[0];
+	}
+
+};
