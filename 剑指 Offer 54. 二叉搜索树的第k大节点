@@ -1,0 +1,24 @@
+给定一棵二叉搜索树，请找出其中第k大的节点
+
+方法:二叉搜索树有个特点，左子树的所有值小于根节点值，右子树的所有节点大于根节点值，利用这个特点，访问顺序为右节点，根节点，右节点即可得到顺序，从而找到第k大节点，相当于中序遍历的倒叙
+void dfs(TreeNode* root, int k, int& count, int& res)
+{
+	if (!root || count == k)
+		return;
+
+	dfs(root->right, k, count, res);
+	count++;
+	if (count == k)
+	{
+		res = root->val;
+		return;
+	}
+	dfs(root->left, k, count, res);
+}
+int kthLargest(TreeNode* root, int k)
+{
+	int count = 0; 
+	int res;
+	dfs(root, k, count, res);
+	return res;
+}
