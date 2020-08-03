@@ -1,0 +1,23 @@
+输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树
+
+
+方法：计算左右子树的深度，如果超过1，返回-1，代表不是平衡二叉树
+int depth(TreeNode* root)
+{
+	if (!root)
+		return 0;
+	int left = depth(root->left);
+	int right = depth(root->right);
+	if (left == -1 || right == -1)
+		return -1;
+	else
+	{
+		if (abs(left - right) > 1)
+			return -1;
+		return max(left, right) + 1;
+	}
+		
+}
+bool isBalanced(TreeNode* root) {
+	return depth(root) != -1;
+}
