@@ -1,0 +1,26 @@
+输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。
+序列内的数字由小到大排列，不同序列按照首个数字从小到大排列
+
+方法：双指针滑窗，left为慢指针，right为快指针，滑窗的和可以由左右两端计算（等差数列），当sum==target时，加入结果数组，同时左指针右移，当sum < target时，右指针右移，增大sum,当sum > target时，
+左指针右移，减小sum
+时间复杂度O(N)，空间复杂度O(1)
+vector<vector<int>> findContinuousSequence(int target) {
+	vector<vector<int>>res;
+	vector<int>r;
+	int sum = 0;
+	int left = 1, right = 2;
+	while (left < right)
+	{
+		sum = (left + right) * (right - left + 1) / 2;
+		if (sum == target)
+		{
+			r.clear();
+			for (int i = left; i <= right; i++) r.emplace_back(i);
+			res.emplace_back(r);
+			left++;
+		}
+		else if (sum < target)right++;
+		else left++;
+	}
+	return res;
+}
