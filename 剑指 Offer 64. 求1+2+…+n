@@ -1,0 +1,8 @@
+求 1+2+...+n ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）
+
+
+方法：利用C++中&&运算的截断效应，当n为0时，返回false而不判断后面的语句，从而加到0停止
+int sumNums(int n) {
+	n && (n += sumNums(n - 1)); //n为0时，则&&左边是false，短路不递归
+	return n;
+}
